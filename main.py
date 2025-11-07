@@ -2,6 +2,22 @@ from pico2d import *
 
 running = True
 
+class Player:
+    def __init__(self):
+        self.x = 400
+        self.y = 300
+        self.frame = 0
+        self.dir = 0
+
+def reset_world():
+    pass
+
+def update_world():
+    pass
+
+def render_world():
+    pass
+
 def handle_events():
     global running, dir
 
