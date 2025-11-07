@@ -21,17 +21,20 @@ def handle_events():
                 dir -= 1
             elif event.key == SDLK_LEFT:
                 dir += 1
-
-open_canvas()
+width = 1280
+height = 720
+open_canvas(width,height)
 
 p = load_image('punch_1.png')
+background = load_image('cagge.jpg')
 
 frame = 0
 dir = 0
 x = 400
 while running:
     clear_canvas()
-    p.clip_draw(frame*128,0,128,128,x,90)
+    background.draw(width/2,height/2)
+    p.clip_draw(frame*128,0,128,128,x,300,512,512)
     update_canvas()
     handle_events()
     frame = (frame + 1) % 5
