@@ -25,7 +25,7 @@ width = 1280
 height = 720
 open_canvas(width,height)
 
-p = load_image('punch_1.png')
+p = load_image('Walking.png')
 background = load_image('cagge.jpg')
 
 frame = 0
@@ -37,7 +37,7 @@ while running:
     p.clip_draw(frame*128,0,128,128,x,300,512,512)
     update_canvas()
     handle_events()
-    frame = (frame + 1) % 5
+    frame = (frame + 1) % 12
     x += dir * 5
     delay(0.1)
 
