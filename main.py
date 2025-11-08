@@ -7,16 +7,41 @@ class Player:
         self.x = 400
         self.y = 300
         self.frame = 0
-        self.dir = 0
+        self.image = load_image('Walking.png')
+
+    def update(self):
+        self.frame = (self.frame + 1) % 12
+        self.x += 5
+
+    def draw(self):
+        self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y, 512, 512)
+
+class Cage:
+    def __init__(self):
+        self.image = load_image('cagge.jpg')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.image.draw(width/2, height/2)
 
 def reset_world():
-    pass
+    global running, player, cage
+    player = Player()
+    cage = Cage()
+    running = True
 
 def update_world():
-    pass
+    player.update()
+    cage.update()
+
 
 def render_world():
-    pass
+    clear_canvas()
+    cage.draw()
+    player.draw()
+    update_canvas()
 
 def handle_events():
     global running, dir
@@ -37,24 +62,19 @@ def handle_events():
                 dir -= 1
             elif event.key == SDLK_LEFT:
                 dir += 1
+
 width = 1280
 height = 720
 open_canvas(width,height)
 
-p = load_image('Walking.png')
-background = load_image('cagge.jpg')
-
-frame = 0
 dir = 0
-x = 400
+
+reset_world()
+
 while running:
-    clear_canvas()
-    background.draw(width/2,height/2)
-    p.clip_draw(frame*128,0,128,128,x,300,512,512)
-    update_canvas()
     handle_events()
-    frame = (frame + 1) % 12
-    x += dir * 5
+    update_world()
+    render_world()
     delay(0.1)
 
 close_canvas()
