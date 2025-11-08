@@ -27,20 +27,27 @@ class Cage:
         self.image.draw(width/2, height/2)
 
 def reset_world():
-    global running, player, cage
-    player = Player()
-    cage = Cage()
+    global running
+    global world
+
     running = True
+    world = []
+
+    cage = Cage()
+    world.append(cage)
+
+    player = Player()
+    world.append(player)
 
 def update_world():
-    player.update()
-    cage.update()
+    for o in world:
+        o.update()
 
 
 def render_world():
     clear_canvas()
-    cage.draw()
-    player.draw()
+    for o in world:
+        o.draw()
     update_canvas()
 
 def handle_events():
