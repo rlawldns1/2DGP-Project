@@ -27,18 +27,21 @@ class Player:
         self.frame = 0
         self.face_dir = 1
         self.idle_image = load_image('Idle.png')
-        self.left_punch_image = load_image('Punch_1.png')
+        self.left_punch_image = load_image('Punch_2.png')
+        self.right_punch_image = load_image('Punch_1.png')
 
         self.image = self.idle_image
 
         self.IDLE = Idle(self)
         self.LEFT_PUNCH = LeftPunch(self)
+        self.RIGHT_PUNCH = RightPunch(self)
 
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {d_down: self.LEFT_PUNCH},
+             self.IDLE: {d_down: self.LEFT_PUNCH, f_down: self.RIGHT_PUNCH},
              self.LEFT_PUNCH: {time_out: self.IDLE},
+             self.RIGHT_PUNCH: {time_out: self.IDLE},
             }
         )
 
@@ -58,12 +61,15 @@ class Idle:
     def enter(self):
         self.player.image = self.player.idle_image
         self.player.frame = 0
+        self.player.wait_time = get_time()
 
     def exit(self):
         pass
 
     def do(self):
-
+        self.player.frame = (self.player.frame + 1) % 1
+        if get_time() - self.player.wait_time > 1.0:
+            self.player.state_machine.handle_state_event(('TIMEOUT', None))
         pass
 
     def draw(self):
@@ -80,12 +86,39 @@ class LeftPunch:
     def enter(self):
         self.player.image = self.player.left_punch_image
         self.player.frame = 0
+        self.player.wait_time = get_time()
+
+    def exit(self):
+        pass
+
+    def do(self):
+        self.player.frame = (self.player.frame + 1) % 3
+        if get_time() - self.player.wait_time > 1.0:
+            self.player.state_machine.handle_state_event(('TIMEOUT', None))
+
+    def draw(self):
+        if self.player.face_dir == 1:
+            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+        else:
+            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+
+class RightPunch:
+    def __init__(self, player):
+        self.player = player
+
+
+    def enter(self):
+        self.player.image = self.player.right_punch_image
+        self.player.frame = 0
+        self.player.wait_time = get_time()
 
     def exit(self):
         pass
 
     def do(self):
         self.player.frame = (self.player.frame + 1) % 5
+        if get_time() - self.player.wait_time > 1.0:
+            self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
         if self.player.face_dir == 1:
