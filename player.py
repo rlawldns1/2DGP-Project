@@ -1,5 +1,24 @@
 from pico2d import *
 
+from state_machine import StateMachine
+
+
+# 왼쪽 펀치
+def d_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
+# 오른쪽 펀치
+def f_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_f
+# 왼쪽 발차기
+def j_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_j
+# 오른쪽 발차기
+def k_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_k
+# 타임아웃 - 3분정도.
+def time_out(e):
+    return e[0] == 'TIMEOUT'
+
 class Player:
 
     def __init__(self):
@@ -7,9 +26,21 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
-        self.image = load_image('Walking.png')
-        self.WALKING = Walking(self)
-        self.state_machine = StateMachine(self.WALKING)
+        self.idle_image = load_image('Idle.png')
+        self.left_punch_image = load_image('Punch_1.png')
+
+        self.image = self.idle_image
+
+        self.IDLE = Idle(self)
+        self.LEFT_PUNCH = LeftPunch(self)
+
+        self.state_machine = StateMachine(
+            self.IDLE,
+            {
+             self.IDLE: {d_down: self.LEFT_PUNCH},
+             self.LEFT_PUNCH: {time_out: self.IDLE},
+            }
+        )
 
     def update(self):
         self.state_machine.update()
@@ -17,18 +48,22 @@ class Player:
     def draw(self):
         self.state_machine.draw()
 
-class Walking:
+    def handle_event(self, event):
+        self.state_machine.handle_state_event(('INPUT', event))
+
+class Idle:
     def __init__(self, player):
         self.player = player
 
     def enter(self):
-        pass
+        self.player.image = self.player.idle_image
+        self.player.frame = 0
 
     def exit(self):
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 12
+
         pass
 
     def draw(self):
@@ -41,8 +76,10 @@ class LeftPunch:
     def __init__(self, player):
         self.player = player
 
+
     def enter(self):
-        self.player.dir = 0
+        self.player.image = self.player.left_punch_image
+        self.player.frame = 0
 
     def exit(self):
         pass
@@ -52,16 +89,6 @@ class LeftPunch:
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 128, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 128, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
-
-class StateMachine:
-    def __init__(self, start_state=None):
-        self.cur_state = start_state
-
-    def update(self):
-        self.cur_state.do()
-
-    def draw(self):
-        self.cur_state.draw()
+            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
