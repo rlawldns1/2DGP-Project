@@ -29,7 +29,7 @@ def j_down(e):
 # 오른쪽 발차기
 def k_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_k
-# 타임아웃 - 3분정도.
+# 타임아웃
 def time_out(e):
     return e[0] == 'TIMEOUT'
 
@@ -40,10 +40,11 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
-        self.idle_image = load_image('Idle.png')
+        self.idle_image = load_image('Dodge.png')
         self.left_punch_image = load_image('Punch_2.png')
         self.right_punch_image = load_image('Punch_1.png')
         self.walk_image = load_image('Walking.png')
+        self.left_kick_image = load_image('Kick.png')
 
         self.image = self.idle_image
 
@@ -85,7 +86,7 @@ class Idle:
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 1
+        self.player.frame = (self.player.frame + 1) % 4
         if get_time() - self.player.wait_time > 1.0:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
         pass
