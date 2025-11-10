@@ -44,7 +44,7 @@ class Player:
         self.left_punch_image = load_image('Punch_2.png')
         self.right_punch_image = load_image('Punch_1.png')
         self.walk_image = load_image('Walking.png')
-        self.left_kick_image = load_image('Kick.png')
+        self.right_kick_image = load_image('Kick.png')
 
         self.image = self.idle_image
 
@@ -52,6 +52,7 @@ class Player:
         self.WALK = Walk(self)
         self.LEFT_PUNCH = LeftPunch(self)
         self.RIGHT_PUNCH = RightPunch(self)
+        self.KICK = Kick(self)
 
         self.state_machine = StateMachine(
             self.IDLE,
@@ -60,6 +61,7 @@ class Player:
              self.LEFT_PUNCH: {time_out: self.IDLE},
              self.RIGHT_PUNCH: {time_out: self.IDLE},
              self.WALK: {a_up: self.IDLE, d_up:self.IDLE},
+             self.KICK: {a_up: self.IDLE, d_up:self.IDLE},
             }
         )
 
@@ -156,6 +158,30 @@ class RightPunch:
 
     def enter(self, event):
         self.player.image = self.player.right_punch_image
+        self.player.frame = 0
+        self.player.wait_time = get_time()
+
+    def exit(self, event):
+        pass
+
+    def do(self):
+        self.player.frame = (self.player.frame + 1) % 5
+        if get_time() - self.player.wait_time > 1.0:
+            self.player.state_machine.handle_state_event(('TIMEOUT', None))
+
+    def draw(self):
+        if self.player.face_dir == 1:
+            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+        else:
+            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+
+class Kick:
+    def __init__(self, player):
+        self.player = player
+
+
+    def enter(self, event):
+        self.player.image = self.player.right_kick_image
         self.player.frame = 0
         self.player.wait_time = get_time()
 
