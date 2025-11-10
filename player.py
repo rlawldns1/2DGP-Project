@@ -2,26 +2,27 @@ from pico2d import *
 
 from state_machine import StateMachine
 
-def right_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
-
-
-def right_up(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
-
-
-def left_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LEFT
-
-
-def left_up(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
-# 왼쪽 펀치
 def d_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
+
+
+def d_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_d
+
+
+def a_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
+
+
+def a_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_a
+
+# 왼쪽 펀치
+def u_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_u
 # 오른쪽 펀치
-def f_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_f
+def i_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_i
 # 왼쪽 발차기
 def j_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_j
@@ -54,10 +55,10 @@ class Player:
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {d_down: self.LEFT_PUNCH, f_down: self.RIGHT_PUNCH, left_down: self.WALK, right_down: self.WALK},
+             self.IDLE: {u_down: self.LEFT_PUNCH, i_down: self.RIGHT_PUNCH, a_down: self.WALK, d_down: self.WALK},
              self.LEFT_PUNCH: {time_out: self.IDLE},
              self.RIGHT_PUNCH: {time_out: self.IDLE},
-             self.WALK: {left_up: self.IDLE, right_up:self.IDLE},
+             self.WALK: {a_up: self.IDLE, d_up:self.IDLE},
             }
         )
 
@@ -104,9 +105,9 @@ class Walk:
         self.player.frame = 0
         self.player.wait_time = get_time()
         self.player.dir = 0
-        if right_down(event) or left_up(event):
+        if d_down(event) or a_up(event):
             self.player.dir = self.player.face_dir = 1
-        elif left_down(event) or right_up(event):
+        elif a_down(event) or d_up(event):
             self.player.dir = self.player.face_dir = -1
 
 
