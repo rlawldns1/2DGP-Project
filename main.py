@@ -1,5 +1,6 @@
 from pico2d import *
 
+import game_world
 from player import Player
 from cage import Cage
 
@@ -12,23 +13,20 @@ def reset_world():
     global player
 
     running = True
-    world = []
 
     cage = Cage()
-    world.append(cage)
+    game_world.add_object(cage)
 
     player = Player()
-    world.append(player)
+    game_world.add_object(player)
 
 def update_world():
-    for o in world:
-        o.update()
+    game_world.update()
 
 
 def render_world():
     clear_canvas()
-    for o in world:
-        o.draw()
+    game_world.render()
     update_canvas()
 
 def handle_events():
