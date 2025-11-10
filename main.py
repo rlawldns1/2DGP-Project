@@ -15,10 +15,10 @@ def reset_world():
     running = True
 
     cage = Cage()
-    game_world.add_object(cage)
+    game_world.add_object(cage,0)
 
     player = Player()
-    game_world.add_object(player)
+    game_world.add_object(player,1)
 
 def update_world():
     game_world.update()
