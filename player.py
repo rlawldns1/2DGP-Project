@@ -57,7 +57,7 @@ class Player:
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {u_down: self.LEFT_PUNCH, i_down: self.RIGHT_PUNCH, a_down: self.WALK, d_down: self.WALK},
+             self.IDLE: {u_down: self.LEFT_PUNCH, i_down: self.RIGHT_PUNCH, a_down: self.WALK, d_down: self.WALK, k_down: self.KICK},
              self.LEFT_PUNCH: {time_out: self.IDLE},
              self.RIGHT_PUNCH: {time_out: self.IDLE},
              self.WALK: {a_up: self.IDLE, d_up:self.IDLE},
