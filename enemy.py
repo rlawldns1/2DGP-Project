@@ -63,11 +63,10 @@ class Enemy:
         self.state_machine.handle_state_event(('INPUT', event))
 
     def get_bb(self):
-        return self.x - 64, self.y - 64, self.x + 64, self.y + 64
+        return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        if group == 'player:enemy':
-            pass
+        pass
 
 class EnemyIdle:
     def __init__(self, enemy):
