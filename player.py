@@ -171,6 +171,16 @@ class LeftPunch:
             self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+        draw_rectangle(*self.get_lp_bb())
+
+    def get_lp_bb(self):
+        lp_offset = 120 * self.player.face_dir
+        lp_x = self.player.x + lp_offset
+        lp_y = self.player.y - 60
+        lp_width = 30
+        lp_height = 30
+
+        return (lp_x - lp_width // 2, lp_y - lp_height // 2, lp_x + lp_width // 2, lp_y + lp_height // 2)
 
 class RightPunch:
     def __init__(self, player):
@@ -197,6 +207,17 @@ class RightPunch:
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
+        draw_rectangle(*self.get_rp_bb())
+
+    def get_rp_bb(self):
+        rp_offset = 140 * self.player.face_dir
+        rp_x = self.player.x + rp_offset
+        rp_y = self.player.y - 50
+        rp_width = 30
+        rp_height = 30
+
+        return (rp_x - rp_width // 2, rp_y - rp_height // 2, rp_x + rp_width // 2, rp_y + rp_height // 2)
+
 class Kick:
     def __init__(self, player):
         self.player = player
@@ -221,3 +242,14 @@ class Kick:
             self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+
+        draw_rectangle(*self.get_kick_bb())
+
+    def get_kick_bb(self):
+        kick_offset = 160 * self.player.face_dir
+        kick_x = self.player.x + kick_offset
+        kick_y = self.player.y - 70
+        kick_width = 30
+        kick_height = 30
+
+        return (kick_x - kick_width // 2, kick_y - kick_height // 2, kick_x + kick_width // 2, kick_y + kick_height // 2)
