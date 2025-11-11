@@ -9,6 +9,10 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 8
+
 def d_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
 
@@ -30,12 +34,11 @@ def u_down(e):
 # 오른쪽 펀치
 def i_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_i
-# 왼쪽 발차기
-def j_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_j
+
 # 오른쪽 발차기
 def k_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_k
+
 # 타임아웃
 def time_out(e):
     return e[0] == 'TIMEOUT'
@@ -96,9 +99,6 @@ class Idle:
 
     def do(self):
         self.player.frame = (self.player.frame + 1) % 4
-        if get_time() - self.player.wait_time > 1.0:
-            self.player.state_machine.handle_state_event(('TIMEOUT', None))
-        pass
 
     def draw(self):
         if self.player.face_dir == 1:
