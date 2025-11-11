@@ -11,7 +11,8 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+
+# FRAMES_PER_SECOND = FRAMES_PER_ACTION / TIME_PER_ACTION
 
 def d_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
@@ -50,6 +51,8 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
+        self.font = load_font('ENCR10B.TTF', 16)
+
         self.idle_image = load_image('Dodge.png')
         self.left_punch_image = load_image('Punch_2.png')
         self.right_punch_image = load_image('Punch_1.png')
@@ -80,6 +83,7 @@ class Player:
 
     def draw(self):
         self.state_machine.draw()
+        self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
@@ -98,13 +102,13 @@ class Idle:
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 4
+        self.player.frame = (self.player.frame + 4 * ACTION_PER_TIME * game_framework.frame_time) % 4
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
 class Walk:
     def __init__(self, player):
@@ -125,14 +129,14 @@ class Walk:
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 12
+        self.player.frame = (self.player.frame + 12 * ACTION_PER_TIME * game_framework.frame_time) % 12
         self.player.x += self.player.dir * RUN_SPEED_PPS * game_framework.frame_time
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
 class LeftPunch:
     def __init__(self, player):
@@ -149,15 +153,15 @@ class LeftPunch:
         pass
 
     def do(self):
-        self.player.frame += 1
+        self.player.frame = (self.player.frame + 3 * ACTION_PER_TIME * game_framework.frame_time)
         if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
 class RightPunch:
     def __init__(self, player):
@@ -174,15 +178,15 @@ class RightPunch:
         pass
 
     def do(self):
-        self.player.frame += 1
+        self.player.frame = (self.player.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
         if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
 class Kick:
     def __init__(self, player):
@@ -199,12 +203,12 @@ class Kick:
         pass
 
     def do(self):
-        self.player.frame += 1
+        self.player.frame = (self.player.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
         if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
         if self.player.face_dir == 1:
-            self.player.image.clip_draw(self.player.frame * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
-            self.player.image.clip_composite_draw(self.player.frame * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
