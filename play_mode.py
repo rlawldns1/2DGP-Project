@@ -34,6 +34,7 @@ def init():
 
 def update():
     game_world.update()
+    delay(0.1)
 
 def draw():
     clear_canvas()

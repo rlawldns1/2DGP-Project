@@ -1,6 +1,13 @@
 from pico2d import *
 
+import game_framework
 from state_machine import StateMachine
+
+PIXEL_PER_METER = (10.0 / 0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 def d_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
@@ -61,7 +68,7 @@ class Player:
              self.LEFT_PUNCH: {time_out: self.IDLE},
              self.RIGHT_PUNCH: {time_out: self.IDLE},
              self.WALK: {a_up: self.IDLE, d_up:self.IDLE},
-             self.KICK: {a_up: self.IDLE, d_up:self.IDLE},
+             self.KICK: {time_out:self.IDLE},
             }
         )
 
@@ -119,7 +126,7 @@ class Walk:
 
     def do(self):
         self.player.frame = (self.player.frame + 1) % 12
-        self.player.x += self.player.dir * 5
+        self.player.x += self.player.dir * RUN_SPEED_PPS * game_framework.frame_time
 
     def draw(self):
         if self.player.face_dir == 1:
