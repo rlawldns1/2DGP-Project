@@ -36,8 +36,9 @@ def init():
     enemy = Enemy()
     game_world.add_object(enemy,1)
 
-    game_world.add_collision_pair('player:enemy',player, None)
-    game_world.add_collision_pair('player:enemy', None, enemy)
+    game_world.add_collision_pair('player_lp:enemy',None, enemy)
+    game_world.add_collision_pair('player_rp:enemy', None, enemy)
+    game_world.add_collision_pair('player_kick:enemy', None, enemy)
 
 
 def update():

@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import game_world
 from state_machine import StateMachine
 
 PIXEL_PER_METER = (10.0 / 0.3)
@@ -231,9 +232,12 @@ class Kick:
         self.player.frame = 0
         self.player.max_frame = 5
         self.player.wait_time = get_time()
+        game_world.add_collision_pair('player_kick:enemy', self.player, None)
 
     def exit(self, event):
-        pass
+        if 'player_kick:enemy' in game_world.collision_pairs:
+            if self.player in game_world.collision_pairs['player_kick:enemy'][0]:
+                game_world.collision_pairs['player_kick:enemy'][0].remove(self.player)
 
     def do(self):
         self.player.frame = (self.player.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
