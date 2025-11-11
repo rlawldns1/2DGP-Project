@@ -56,8 +56,22 @@ class Enemy:
 
     def draw(self):
         self.state_machine.draw()
+        hp_bar_x = 1280-400-100
+        hp_bar_y = 620
+        hp_bar_width = 400
+        hp_bar_height = 50
+
+        # HP 바 배경
+        draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + hp_bar_width, hp_bar_y + hp_bar_height)
+
+        # 현재 HP에 따른 HP 바
+        current_hp_width = (self.cur_hp / self.max_hp) * hp_bar_width
+        draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height)
+
         self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
+        self.font.draw(self.x - 50, self.y + 150, f'HP: {self.cur_hp}/{self.max_hp}', (255, 255, 0))
         draw_rectangle(*self.get_bb())
+
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
@@ -66,7 +80,11 @@ class Enemy:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'player_lp:enemy' or group == 'player_rp:enemy' or group == 'player_kick:enemy':
+            self.cur_hp -= 5
+
+        if self.cur_hp <= 0:
+            self.cur_hp = 0
 
 class EnemyIdle:
     def __init__(self, enemy):
