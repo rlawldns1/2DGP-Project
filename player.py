@@ -51,6 +51,8 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
+        self.max_hp = 100
+        self.cur_hp = self.max_hp
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Dodge.png')
@@ -84,9 +86,16 @@ class Player:
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
+        draw_rectangle(*self.get_bb())
+
+
+
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
+
+    def get_bb(self):
+        return self.x - 64, self.y - 64, self.x + 64, self.y + 64
 
 class Idle:
     def __init__(self, player):
