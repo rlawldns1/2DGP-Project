@@ -102,17 +102,29 @@ class Player:
         self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
         draw_rectangle(*self.get_bb())
 
-
-
-
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
 
     def get_bb(self):
+        if isinstance(self.state_machine.cur_state, Kick):
+            if 3 <= self.frame < 4 and not self.state_machine.cur_state.hit:
+                kick_offset = 160 * self.face_dir
+                kick_x = self.x + kick_offset
+                kick_y = self.y - 70
+                kick_width = 30
+                kick_height = 30
+                return (kick_x - kick_width // 2, kick_y - kick_height // 2,
+                        kick_x + kick_width // 2, kick_y + kick_height // 2)
+
+        # 기본 바운딩 박스
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'player_kick:enemy':
+            if isinstance(self.state_machine.cur_state, Kick):
+                if not self.state_machine.cur_state.hit:
+                    self.state_machine.cur_state.hit = True
+
 
 class Idle:
     def __init__(self, player):
@@ -238,6 +250,7 @@ class RightPunch:
 class Kick:
     def __init__(self, player):
         self.player = player
+        self.hit = False
 
 
     def enter(self, event):
@@ -245,12 +258,10 @@ class Kick:
         self.player.frame = 0
         self.player.max_frame = 5
         self.player.wait_time = get_time()
-        game_world.add_collision_pair('player_kick:enemy', self.player, None)
+        self.hit = False
 
     def exit(self, event):
-        if 'player_kick:enemy' in game_world.collision_pairs:
-            if self.player in game_world.collision_pairs['player_kick:enemy'][0]:
-                game_world.collision_pairs['player_kick:enemy'][0].remove(self.player)
+        pass
 
     def do(self):
         self.player.frame = (self.player.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
@@ -273,3 +284,4 @@ class Kick:
         kick_height = 30
 
         return (kick_x - kick_width // 2, kick_y - kick_height // 2, kick_x + kick_width // 2, kick_y + kick_height // 2)
+
