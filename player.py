@@ -142,14 +142,15 @@ class LeftPunch:
     def enter(self, event):
         self.player.image = self.player.left_punch_image
         self.player.frame = 0
+        self.player.max_frame = 3
         self.player.wait_time = get_time()
 
     def exit(self, event):
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 3
-        if get_time() - self.player.wait_time > 1.0:
+        self.player.frame += 1
+        if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
@@ -166,14 +167,15 @@ class RightPunch:
     def enter(self, event):
         self.player.image = self.player.right_punch_image
         self.player.frame = 0
+        self.player.max_frame = 5
         self.player.wait_time = get_time()
 
     def exit(self, event):
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 5
-        if get_time() - self.player.wait_time > 1.0:
+        self.player.frame += 1
+        if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
@@ -190,14 +192,15 @@ class Kick:
     def enter(self, event):
         self.player.image = self.player.right_kick_image
         self.player.frame = 0
+        self.player.max_frame = 5
         self.player.wait_time = get_time()
 
     def exit(self, event):
         pass
 
     def do(self):
-        self.player.frame = (self.player.frame + 1) % 5
-        if get_time() - self.player.wait_time > 1.0:
+        self.player.frame += 1
+        if self.player.frame >= self.player.max_frame:
             self.player.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
