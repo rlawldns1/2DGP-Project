@@ -5,6 +5,7 @@ import game_world
 import title_mode
 from player import Player
 from cage import Cage
+from enemy import Enemy
 
 running = True
 player = None
@@ -31,6 +32,9 @@ def init():
 
     player = Player()
     game_world.add_object(player,1)
+
+    enemy = Enemy()
+    game_world.add_object(enemy,1)
 
 def update():
     game_world.update()
