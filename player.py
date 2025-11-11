@@ -115,6 +115,15 @@ class Player:
                 kick_height = 30
                 return (kick_x - kick_width // 2, kick_y - kick_height // 2,
                         kick_x + kick_width // 2, kick_y + kick_height // 2)
+        # 왼쪽 펀치 상태
+        elif isinstance(self.state_machine.cur_state, LeftPunch):
+             if 1 <= self.frame < 3 and not self.state_machine.cur_state.hit:
+                return self.state_machine.cur_state.get_lp_bb()
+
+        # 오른쪽 펀치 상태
+        elif isinstance(self.state_machine.cur_state, RightPunch):
+            if 2 <= self.frame < 5 and not self.state_machine.cur_state.hit:
+                return self.state_machine.cur_state.get_rp_bb()
 
         # 기본 바운딩 박스
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
@@ -122,6 +131,14 @@ class Player:
     def handle_collision(self, group, other):
         if group == 'player_kick:enemy':
             if isinstance(self.state_machine.cur_state, Kick):
+                if not self.state_machine.cur_state.hit:
+                    self.state_machine.cur_state.hit = True
+        elif group == 'player_lp:enemy':
+            if isinstance(self.state_machine.cur_state, LeftPunch):
+                if not self.state_machine.cur_state.hit:
+                    self.state_machine.cur_state.hit = True
+        elif group == 'player_rp:enemy':
+            if isinstance(self.state_machine.cur_state, RightPunch):
                 if not self.state_machine.cur_state.hit:
                     self.state_machine.cur_state.hit = True
 
@@ -179,6 +196,7 @@ class Walk:
 class LeftPunch:
     def __init__(self, player):
         self.player = player
+        self.hit = False
 
 
     def enter(self, event):
@@ -186,6 +204,7 @@ class LeftPunch:
         self.player.frame = 0
         self.player.max_frame = 3
         self.player.wait_time = get_time()
+        self.hit = False
 
     def exit(self, event):
         pass
@@ -214,6 +233,7 @@ class LeftPunch:
 class RightPunch:
     def __init__(self, player):
         self.player = player
+        self.hit = False
 
 
     def enter(self, event):
@@ -221,6 +241,7 @@ class RightPunch:
         self.player.frame = 0
         self.player.max_frame = 5
         self.player.wait_time = get_time()
+        self.hit = False
 
     def exit(self, event):
         pass
