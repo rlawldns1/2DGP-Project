@@ -18,6 +18,9 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 def time_out(e):
     return e[0] == 'TIMEOUT'
 
+def death(e):
+    return e[0] == 'DEATH'
+
 class Enemy:
 
     def __init__(self):
@@ -46,7 +49,7 @@ class Enemy:
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {},
+             self.IDLE: {death: self.DEATH},
              self.DEATH: {},
              # self.PUNCH: {},
              # self.WALK: {},
@@ -55,7 +58,10 @@ class Enemy:
         )
 
     def update(self):
+        if self.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
+            self.state_machine.handle_state_event(('DEATH', None))
         self.state_machine.update()
+
 
     def draw(self):
         self.state_machine.draw()
@@ -120,12 +126,13 @@ class EnemyDeath:
         self.enemy.frame = 0
         self.enemy.wait_time = get_time()
         self.enemy.dir = 0
+        self.enemy.max_frame = 5
 
     def exit(self, event):
         pass
 
     def do(self):
-        self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time) % 5
+        self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
 
     def draw(self):
         if self.enemy.face_dir == 1:
