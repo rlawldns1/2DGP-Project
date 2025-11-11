@@ -30,6 +30,7 @@ class Enemy:
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Enemy/dodge.png')
+        self.death_image = load_image('Enemy/Death.png')
         # self.punch_image = load_image('EnemyPunk/punch.png')
         # self.walk_image = load_image('EnemyPunk/walk.png')
         # self.kick_image = load_image('EnemyPunk/kick.png')
@@ -37,6 +38,7 @@ class Enemy:
         self.image = self.idle_image
 
         self.IDLE = EnemyIdle(self)
+        self.DEATH = EnemyDeath(self)
         # self.WALK = EnemyWalk(self)
         # self.PUNCH = EnemyPunch(self)
         # self.KICK = EnemyKick(self)
@@ -45,6 +47,7 @@ class Enemy:
             self.IDLE,
             {
              self.IDLE: {},
+             self.DEATH: {},
              # self.PUNCH: {},
              # self.WALK: {},
              # self.KICK: {},
@@ -101,6 +104,28 @@ class EnemyIdle:
 
     def do(self):
         self.enemy.frame = (self.enemy.frame + 4 * ACTION_PER_TIME * game_framework.frame_time) % 4
+
+    def draw(self):
+        if self.enemy.face_dir == 1:
+            self.enemy.image.clip_draw(int(self.enemy.frame) * 128, 0, 128, 128, self.enemy.x, self.enemy.y, 512, 512)
+        else:
+            self.enemy.image.clip_composite_draw(int(self.enemy.frame) * 128, 0, 128, 128, 0, 'h', self.enemy.x, self.enemy.y, 512, 512)
+
+class EnemyDeath:
+    def __init__(self, enemy):
+        self.enemy = enemy
+
+    def enter(self,event):
+        self.enemy.image = self.enemy.death_image
+        self.enemy.frame = 0
+        self.enemy.wait_time = get_time()
+        self.enemy.dir = 0
+
+    def exit(self, event):
+        pass
+
+    def do(self):
+        self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time) % 5
 
     def draw(self):
         if self.enemy.face_dir == 1:
