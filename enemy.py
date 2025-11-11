@@ -65,6 +65,10 @@ class Enemy:
     def get_bb(self):
         return self.x - 64, self.y - 64, self.x + 64, self.y + 64
 
+    def handle_collision(self, group, other):
+        if group == 'player:enemy':
+            pass
+
 class EnemyIdle:
     def __init__(self, enemy):
         self.enemy = enemy
