@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import game_world
 from state_machine import StateMachine
 
 PIXEL_PER_METER = (10.0 / 0.3)
@@ -133,7 +134,10 @@ class EnemyDeath:
         pass
 
     def do(self):
-        self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
+        if self.enemy.frame < self.enemy.max_frame:
+            self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
+        else:
+            game_world.remove_object(self.enemy)
 
     def draw(self):
         if self.enemy.face_dir == 1:
