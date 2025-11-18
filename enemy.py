@@ -75,7 +75,8 @@ class Enemy:
 
         # 현재 HP에 따른 HP 바
         current_hp_width = (self.cur_hp / self.max_hp) * hp_bar_width
-        draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height)
+        if current_hp_width > 0:
+            draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
         self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
         self.font.draw(self.x - 50, self.y + 150, f'HP: {self.cur_hp}/{self.max_hp}', (255, 255, 0))
