@@ -304,3 +304,4 @@ class Kick:
 
         return (kick_x - kick_width // 2, kick_y - kick_height // 2, kick_x + kick_width // 2, kick_y + kick_height // 2)
 
+
