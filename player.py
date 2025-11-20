@@ -87,7 +87,6 @@ class Player:
     def draw(self):
         self.state_machine.draw()
 
-        self.state_machine.draw()
         hp_bar_x = 100
         hp_bar_y = 620
         hp_bar_width = 400

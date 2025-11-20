@@ -22,6 +22,9 @@ def time_out(e):
 def death(e):
     return e[0] == 'DEATH'
 
+def hurt(e):
+    return e[0] == 'HURT'
+
 class Enemy:
 
     def __init__(self):
@@ -35,6 +38,7 @@ class Enemy:
 
         self.idle_image = load_image('Enemy/dodge.png')
         self.death_image = load_image('Enemy/Death.png')
+        self.hurt_image = load_image('Enemy/hurt.png')
         # self.punch_image = load_image('EnemyPunk/punch.png')
         # self.walk_image = load_image('EnemyPunk/walk.png')
         # self.kick_image = load_image('EnemyPunk/kick.png')
@@ -43,6 +47,7 @@ class Enemy:
 
         self.IDLE = EnemyIdle(self)
         self.DEATH = EnemyDeath(self)
+        self.HURT = EnemyHurt(self)
         # self.WALK = EnemyWalk(self)
         # self.PUNCH = EnemyPunch(self)
         # self.KICK = EnemyKick(self)
@@ -50,8 +55,9 @@ class Enemy:
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {death: self.DEATH},
+             self.IDLE: {death: self.DEATH, hurt: self.HURT},
              self.DEATH: {},
+             self.HURT: {time_out: self.IDLE, death: self.DEATH},
              # self.PUNCH: {},
              # self.WALK: {},
              # self.KICK: {},
@@ -93,8 +99,10 @@ class Enemy:
         if group == 'player_lp:enemy' or group == 'player_rp:enemy' or group == 'player_kick:enemy':
             self.cur_hp -= 5
 
-        if self.cur_hp <= 0:
-            self.cur_hp = 0
+            if self.cur_hp <= 0:
+                self.cur_hp = 0
+            else:
+                self.state_machine.handle_state_event(('HURT', None))
 
 class EnemyIdle:
     def __init__(self, enemy):
@@ -137,6 +145,32 @@ class EnemyDeath:
             self.enemy.frame = (self.enemy.frame + 5 * ACTION_PER_TIME * game_framework.frame_time)
         else:
             game_world.remove_object(self.enemy)
+
+    def draw(self):
+        if self.enemy.face_dir == 1:
+            self.enemy.image.clip_draw(int(self.enemy.frame) * 128, 0, 128, 128, self.enemy.x, self.enemy.y, 512, 512)
+        else:
+            self.enemy.image.clip_composite_draw(int(self.enemy.frame) * 128, 0, 128, 128, 0, 'h', self.enemy.x, self.enemy.y, 512, 512)
+
+class EnemyHurt:
+    def __init__(self, enemy):
+        self.enemy = enemy
+
+    def enter(self,event):
+        self.enemy.image = self.enemy.hurt_image
+        self.enemy.frame = 0
+        self.enemy.wait_time = get_time()
+        self.enemy.dir = 0
+        self.enemy.max_frame = 3
+
+    def exit(self, event):
+        pass
+
+    def do(self):
+        if self.enemy.frame < self.enemy.max_frame:
+            self.enemy.frame = (self.enemy.frame + 10 * ACTION_PER_TIME * game_framework.frame_time)
+        else:
+            self.enemy.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
         if self.enemy.face_dir == 1:
