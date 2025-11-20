@@ -79,7 +79,6 @@ class Enemy:
         if current_hp_width > 0:
             draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
-        self.font.draw(self.x - 50, self.y + 50, f'(Time : {get_time():.2f})', (255, 255, 0))
         self.font.draw(self.x - 50, self.y + 150, f'HP: {self.cur_hp}/{self.max_hp}', (255, 255, 0))
         draw_rectangle(*self.get_bb())
 
