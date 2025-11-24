@@ -3,6 +3,8 @@ from pico2d import *
 import game_framework
 import game_world
 import title_mode
+import win_mode
+import lose_mode
 from player import Player
 from cage import Cage
 from enemy import Enemy
@@ -61,6 +63,10 @@ def update():
         _time_acc -= 1.0
         if time_left < 0:
             time_left = 0
+
+    enemies = [obj for obj in game_world.world[1] if isinstance(obj, Enemy)]
+    if len(enemies) == 0:
+        game_framework.change_mode(win_mode)
 
 def draw():
     clear_canvas()
