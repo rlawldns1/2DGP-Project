@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 import game_world
 from state_machine import StateMachine
+from stats import Stats
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
@@ -32,8 +33,7 @@ class Enemy:
         self.y = 300
         self.frame = 0
         self.face_dir = -1
-        self.max_hp = 100
-        self.cur_hp = self.max_hp
+        self.stats = Stats(100, 10, 5)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Enemy/dodge.png')
@@ -65,7 +65,7 @@ class Enemy:
         )
 
     def update(self):
-        if self.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
+        if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
             self.state_machine.handle_state_event(('DEATH', None))
         self.state_machine.update()
 
@@ -81,11 +81,11 @@ class Enemy:
         draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + hp_bar_width, hp_bar_y + hp_bar_height)
 
         # 현재 HP에 따른 HP 바
-        current_hp_width = (self.cur_hp / self.max_hp) * hp_bar_width
+        current_hp_width = (self.stats.cur_hp / self.stats.max_hp) * hp_bar_width
         if current_hp_width > 0:
             draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
-        self.font.draw(self.x - 50, self.y + 150, f'HP: {self.cur_hp}/{self.max_hp}', (255, 255, 0))
+        self.font.draw(self.x - 50, self.y + 150, f'HP: {self.stats.cur_hp}/{self.stats.max_hp}', (255, 255, 0))
         draw_rectangle(*self.get_bb())
 
 
@@ -96,13 +96,12 @@ class Enemy:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        if group == 'player_lp:enemy' or group == 'player_rp:enemy' or group == 'player_kick:enemy':
-            self.cur_hp -= 5
+        actual_damage = self.stats.take_damage(other.stats.attack)
 
-            if self.cur_hp <= 0:
-                self.cur_hp = 0
-            else:
-                self.state_machine.handle_state_event(('HURT', None))
+        if not self.stats.is_alive():
+            self.state_machine.handle_state_event(('DEATH', None))
+        else:
+            self.state_machine.handle_state_event(('HURT', None))
 
 class EnemyIdle:
     def __init__(self, enemy):

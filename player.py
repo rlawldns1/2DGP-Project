@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 import game_world
 from state_machine import StateMachine
+from stats import Stats
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
@@ -52,8 +53,7 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
-        self.max_hp = 100
-        self.cur_hp = self.max_hp
+        self.stats = Stats(100,10,5)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Dodge.png')
@@ -94,7 +94,7 @@ class Player:
 
         draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + hp_bar_width, hp_bar_y + hp_bar_height)
 
-        current_hp_width = (self.cur_hp / self.max_hp) * hp_bar_width
+        current_hp_width = (self.stats.cur_hp / self.stats.max_hp) * hp_bar_width
         if current_hp_width > 0:
             draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
