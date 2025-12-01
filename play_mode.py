@@ -34,7 +34,7 @@ def init():
     global time_left, _time_acc, time_font
     running = True
 
-    time_left = 5
+    time_left = 60
     _time_acc = 0.0
     time_font = load_font('ENCR10B.TTF', 50)
 
