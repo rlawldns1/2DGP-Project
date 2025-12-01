@@ -127,18 +127,7 @@ class Player:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        if group == 'player_kick:enemy':
-            if isinstance(self.state_machine.cur_state, Kick):
-                if not self.state_machine.cur_state.hit:
-                    self.state_machine.cur_state.hit = True
-        elif group == 'player_lp:enemy':
-            if isinstance(self.state_machine.cur_state, LeftPunch):
-                if not self.state_machine.cur_state.hit:
-                    self.state_machine.cur_state.hit = True
-        elif group == 'player_rp:enemy':
-            if isinstance(self.state_machine.cur_state, RightPunch):
-                if not self.state_machine.cur_state.hit:
-                    self.state_machine.cur_state.hit = True
+        pass
 
 
 class Idle:

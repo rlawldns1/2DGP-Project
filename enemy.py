@@ -4,6 +4,7 @@ import game_framework
 import game_world
 from state_machine import StateMachine
 from stats import Stats
+from player import LeftPunch, RightPunch, Kick
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
@@ -96,6 +97,23 @@ class Enemy:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
+        attack_groups = {
+            'player_lp:enemy': LeftPunch,
+            'player_rp:enemy': RightPunch,
+            'player_kick:enemy': Kick,
+        }
+
+        attack_state_cls = attack_groups.get(group)
+        if not attack_state_cls:
+            return
+
+        cur_state = getattr(other.state_machine, 'cur_state', None)
+        if not isinstance(cur_state, attack_state_cls):
+            return
+        if cur_state.hit:
+            return
+
+        cur_state.hit = True
         actual_damage = self.stats.take_damage(other.stats.attack)
 
         if not self.stats.is_alive():
