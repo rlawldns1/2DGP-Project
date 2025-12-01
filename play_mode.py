@@ -5,6 +5,7 @@ import game_world
 import title_mode
 import win_mode
 import lose_mode
+import rest_mode
 from player import Player
 from cage import Cage
 from enemy import Enemy
@@ -54,8 +55,6 @@ def init():
 def update():
     global time_left, _time_acc
 
-    game_world.update()
-    game_world.handle_collisions()
 
     _time_acc += game_framework.frame_time
     while _time_acc >= 1.0 and time_left > 0:
@@ -63,6 +62,12 @@ def update():
         _time_acc -= 1.0
         if time_left < 0:
             time_left = 0
+    if time_left == 0:
+        game_framework.change_mode(rest_mode)
+        return
+
+    game_world.update()
+    game_world.handle_collisions()
 
     enemies = [obj for obj in game_world.world[1] if isinstance(obj, Enemy)]
     if len(enemies) == 0:
