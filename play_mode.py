@@ -34,7 +34,7 @@ def init():
     global time_left, _time_acc, time_font
     running = True
 
-    time_left = 60
+    time_left = 5
     _time_acc = 0.0
     time_font = load_font('ENCR10B.TTF', 50)
 
@@ -64,7 +64,6 @@ def update():
             time_left = 0
     if time_left == 0:
         game_framework.push_mode(rest_mode)
-        return
 
     game_world.update()
     game_world.handle_collisions()
@@ -95,4 +94,6 @@ def pause():
     pass
 
 def resume():
-    pass
+    global time_left, _time_acc
+    time_left = 60
+    _time_acc = 0.0
