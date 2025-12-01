@@ -63,7 +63,7 @@ def update():
         if time_left < 0:
             time_left = 0
     if time_left == 0:
-        game_framework.change_mode(rest_mode)
+        game_framework.push_mode(rest_mode)
         return
 
     game_world.update()
@@ -90,3 +90,9 @@ def finish():
     if time_font:
         del time_font
         time_font = None
+
+def pause():
+    pass
+
+def resume():
+    pass
