@@ -65,15 +65,45 @@ class Enemy:
              # self.KICK: {},
             }
         )
+        self.build_behavior_tree()
+
+    def build_behavior_tree(self):
+        # 타깃 있는지 확인하는 조건 노드
+        has_target = Condition('HasTarget', Enemy.bt_has_target, self)
+
+        # 아무 것도 안 하는 Idle 액션
+        def idle_func(enemy):
+            print('[BT] IdleAction 실행')
+            return BehaviorTree.SUCCESS
+
+        idle_action = Action('IdleAction', idle_func, self)
+
+        # 루트 셀렉터: HasTarget 먼저 검사, 실패하면 Idle 실행
+        root = Selector('RootSelector', has_target, idle_action)
+
+        self.bt = BehaviorTree(root)
 
     def set_target(self, target):
         self.target = target
         print('Enemy Target : ',target)
 
+    def bt_has_target(self):
+        if self.target is None:
+            print('Enemy has no target')
+            return BehaviorTree.FAIL
+        if not hasattr(self.target, 'stats') or not self.target.stats.is_alive():
+            print('Enemy target is dead')
+            return BehaviorTree.FAIL
+        print('Enemy has target')
+        return BehaviorTree.SUCCESS
+
     def update(self):
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
             self.state_machine.handle_state_event(('DEATH', None))
         self.state_machine.update()
+
+        if hasattr(self, 'bt') and not isinstance(self.state_machine.cur_state, EnemyDeath):
+            self.bt.run()
 
 
     def draw(self):
