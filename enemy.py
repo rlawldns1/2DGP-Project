@@ -68,18 +68,19 @@ class Enemy:
         self.build_behavior_tree()
 
     def build_behavior_tree(self):
-        # 타깃 있는지 확인하는 조건 노드
         has_target = Condition('HasTarget', Enemy.bt_has_target, self)
+        chase_target = Action('ChaseTarget', Enemy.bt_chase_target, self)
 
-        # 아무 것도 안 하는 Idle 액션
+        chase_sequence = Sequence('ChaseSequence', has_target, chase_target)
+
+
         def idle_func(enemy):
             print('[BT] IdleAction 실행')
             return BehaviorTree.SUCCESS
 
         idle_action = Action('IdleAction', idle_func, self)
 
-        # 루트 셀렉터: HasTarget 먼저 검사, 실패하면 Idle 실행
-        root = Selector('RootSelector', has_target, idle_action)
+        root = Selector('RootSelector', chase_sequence, idle_action)
 
         self.bt = BehaviorTree(root)
 
@@ -96,6 +97,21 @@ class Enemy:
             return BehaviorTree.FAIL
         print('Enemy has target')
         return BehaviorTree.SUCCESS
+
+    def bt_chase_target(self):
+        if self.target is None:
+            return BehaviorTree.FAIL
+
+        dx = self.target.x - self.x
+
+        if abs(dx) < 5:
+            return BehaviorTree.SUCCESS
+
+        self.face_dir = 1 if dx > 0 else -1
+        self.x += self.face_dir * RUN_SPEED_PPS * game_framework.frame_time
+
+        print(f'[BT] ChaseTarget: x={self.x:.1f}, target_x={self.target.x:.1f}')
+        return BehaviorTree.RUNNING
 
     def update(self):
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
