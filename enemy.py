@@ -5,6 +5,7 @@ import game_world
 from state_machine import StateMachine
 from stats import Stats
 from player import LeftPunch, RightPunch, Kick
+from behavior_tree import *
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
@@ -37,12 +38,12 @@ class Enemy:
         self.stats = Stats(100, 10, 5)
         self.font = load_font('ENCR10B.TTF', 16)
 
+        ## behavior tree 관련 멤버 변수
+        self.target = None
+
         self.idle_image = load_image('Enemy/dodge.png')
         self.death_image = load_image('Enemy/Death.png')
         self.hurt_image = load_image('Enemy/hurt.png')
-        # self.punch_image = load_image('EnemyPunk/punch.png')
-        # self.walk_image = load_image('EnemyPunk/walk.png')
-        # self.kick_image = load_image('EnemyPunk/kick.png')
 
         self.image = self.idle_image
 
@@ -64,6 +65,10 @@ class Enemy:
              # self.KICK: {},
             }
         )
+
+    def set_target(self, target):
+        self.target = target
+        print('Enemy Target : ',target)
 
     def update(self):
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):

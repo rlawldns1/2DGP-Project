@@ -45,6 +45,7 @@ def init():
     game_world.add_object(player,1)
 
     enemy = Enemy()
+    enemy.set_target(player)
     game_world.add_object(enemy,1)
 
     game_world.add_collision_pair('player_lp:enemy', player, enemy)
