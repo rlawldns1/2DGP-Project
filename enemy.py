@@ -28,6 +28,9 @@ def death(e):
 def hurt(e):
     return e[0] == 'HURT'
 
+def attack(e):
+    return e[0] == 'ATTACK'
+
 class Enemy:
 
     def __init__(self):
