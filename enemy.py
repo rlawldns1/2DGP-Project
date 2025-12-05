@@ -71,8 +71,9 @@ class Enemy:
         has_target = Condition('HasTarget', Enemy.bt_has_target, self)
         chase_target = Action('ChaseTarget', Enemy.bt_chase_target, self)
         in_attack_range = Condition('InAttackRange', Enemy.bt_in_attack_range, self)
+        attack_target = Action('AttackTarget', Enemy.attack_target, self)
         chase_sequence = Sequence('ChaseSequence', has_target, chase_target)
-        attack_sequence = Sequence('AttackSequence', has_target, in_attack_range)
+        attack_sequence = Sequence('AttackSequence', has_target, in_attack_range, attack_target)
 
 
         def idle_func(enemy):
@@ -105,7 +106,7 @@ class Enemy:
 
         dx = self.target.x - self.x
 
-        if abs(dx) < 100:
+        if abs(dx) < 90:
             return BehaviorTree.SUCCESS
 
         self.face_dir = 1 if dx > 0 else -1
@@ -121,9 +122,17 @@ class Enemy:
         dx = self.target.x - self.x
         distance = abs(dx)
 
-        attack_range = 150  # 공격 범위
+        attack_range = 100  # 공격 범위
         print(f'[BT] InAttackRange: distance={distance:.1f}, attack_range={attack_range}')
         return BehaviorTree.SUCCESS if distance <= attack_range else BehaviorTree.FAIL
+
+    def attack_target(self):
+        if self.target is None:
+            return BehaviorTree.FAIL
+
+        if hasattr(self.target, 'stats') and self.target.stats.is_alive():
+            damage = self.target.stats.take_damage(self.stats.attack)
+        return BehaviorTree.SUCCESS
 
     def update(self):
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
