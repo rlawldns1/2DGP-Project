@@ -104,7 +104,7 @@ class Enemy:
 
         dx = self.target.x - self.x
 
-        if abs(dx) < 5:
+        if abs(dx) < 100:
             return BehaviorTree.SUCCESS
 
         self.face_dir = 1 if dx > 0 else -1
