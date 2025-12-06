@@ -323,7 +323,6 @@ class EnemyAttack:
         )
         self.enemy.current_attack_profile = self.profile
 
-        # 프로필에 들어있는 이미지 사용
         self.enemy.image = self.profile['image']
         self.enemy.frame = 0
         self.enemy.max_frame = self.profile['frames']
