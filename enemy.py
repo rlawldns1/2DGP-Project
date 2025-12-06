@@ -47,15 +47,41 @@ class Enemy:
         self.idle_image = load_image('Enemy/dodge.png')
         self.death_image = load_image('Enemy/Death.png')
         self.hurt_image = load_image('Enemy/hurt.png')
+        self.left_punch_image = load_image('Enemy/Punch_2.png')
+        self.right_punch_image = load_image('Enemy/Punch_1.png')
+        self.kick_image = load_image('Enemy/Kick.png')
+
+        self.attacks = [
+            {
+                'name': 'left_punch',
+                'image': self.left_punch_image,
+                'damage': 5,
+                'range': 50,
+                'frame_count': 3
+            },
+            {
+                'name': 'right_punch',
+                'image': self.right_punch_image,
+                'damage': 5,
+                'range': 50,
+                'frame_count': 5
+            },
+            {
+                'name': 'kick',
+                'image': self.kick_image,
+                'damage': 5,
+                'range': 70,
+                'frame_count': 5
+            }
+        ]
+        self.current_attack = None
 
         self.image = self.idle_image
 
         self.IDLE = EnemyIdle(self)
         self.DEATH = EnemyDeath(self)
         self.HURT = EnemyHurt(self)
-        # self.WALK = EnemyWalk(self)
-        # self.PUNCH = EnemyPunch(self)
-        # self.KICK = EnemyKick(self)
+
 
         self.state_machine = StateMachine(
             self.IDLE,
