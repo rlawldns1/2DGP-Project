@@ -1,4 +1,5 @@
 from pico2d import *
+import random
 
 import game_framework
 import game_world
@@ -163,6 +164,17 @@ class Enemy:
             damage = self.target.stats.take_damage(self.stats.attack)
         return BehaviorTree.SUCCESS
 
+    def attack_target(self):
+        if self.target is None:
+            return BehaviorTree.FAIL
+        if not hasattr(self.target, 'stats') or not self.target.stats.is_alive():
+            return BehaviorTree.FAIL
+
+        profile = random.choice(self.attacks)
+        payload = {'kind': profile['name'], 'target': self.target}
+        self.state_machine.handle_state_event(('ATTACK', payload))
+        return BehaviorTree.SUCCESS
+
     def update(self):
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
             self.state_machine.handle_state_event(('DEATH', None))
@@ -295,3 +307,52 @@ class EnemyHurt:
             self.enemy.image.clip_draw(int(self.enemy.frame) * 128, 0, 128, 128, self.enemy.x, self.enemy.y, 512, 512)
         else:
             self.enemy.image.clip_composite_draw(int(self.enemy.frame) * 128, 0, 128, 128, 0, 'h', self.enemy.x, self.enemy.y, 512, 512)
+
+class EnemyAttack:
+    def __init__(self, enemy):
+        self.enemy = enemy
+        self.profile = None
+
+    def enter(self, event):
+        payload = event[1] or {}
+        kind = payload.get('kind', 'LEFT_PUNCH')
+
+        self.profile = next(
+            (p for p in self.enemy.attack_profiles if p['name'] == kind),
+            self.enemy.attack_profiles[0]
+        )
+        self.enemy.current_attack_profile = self.profile
+
+        # 프로필에 들어있는 이미지 사용
+        self.enemy.image = self.profile['image']
+        self.enemy.frame = 0
+        self.enemy.max_frame = self.profile['frames']
+
+        target = payload.get('target')
+        if target and hasattr(target, 'stats') and target.stats.is_alive():
+            damage = int(self.enemy.stats.attack * self.profile['damage'])
+            target.stats.take_damage(damage)
+
+    def exit(self, event):
+        self.profile = None
+        self.enemy.current_attack_profile = None
+
+    def do(self):
+        if self.enemy.frame < self.enemy.max_frame:
+            self.enemy.frame += 5 * ACTION_PER_TIME * game_framework.frame_time
+        else:
+            self.enemy.state_machine.handle_state_event(('TIMEOUT', None))
+
+    def draw(self):
+        profile = self.enemy.current_attack_profile or self.enemy.attack_profiles[0]
+        src_x = int(self.enemy.frame) * 128
+        src_y = 0
+
+        img = profile['image']
+        if self.enemy.face_dir == 1:
+            img.clip_draw(src_x, src_y, 128, 128,
+                          self.enemy.x, self.enemy.y, 512, 512)
+        else:
+            img.clip_composite_draw(src_x, src_y, 128, 128,
+                                    0, 'h',
+                                    self.enemy.x, self.enemy.y, 512, 512)
