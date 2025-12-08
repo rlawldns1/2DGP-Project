@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import play_mode
+import style_select_mode
 import tournament_mode
 
 image = None
@@ -21,7 +22,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.change_mode(tournament_mode)
+            game_framework.change_mode(style_select_mode)
 
 def draw():
     clear_canvas()
