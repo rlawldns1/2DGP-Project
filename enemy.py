@@ -39,8 +39,11 @@ class Enemy:
         self.y = 300
         self.frame = 0
         self.face_dir = -1
-        self.stats = Stats(100, 10, 5)
+        self.stats = Stats(100, 5, 5)
         self.font = load_font('ENCR10B.TTF', 16)
+
+        self.attack_cooldown = 0.0
+        self.attack_cooldown_time = 1.0
 
         ## behavior tree 관련 멤버 변수
         self.target = None
@@ -56,21 +59,21 @@ class Enemy:
             {
                 'name': 'left_punch',
                 'image': self.left_punch_image,
-                'damage': 5,
+                'damage': 1,
                 'range': 50,
                 'frame_count': 3
             },
             {
                 'name': 'right_punch',
                 'image': self.right_punch_image,
-                'damage': 5,
+                'damage': 1,
                 'range': 50,
                 'frame_count': 5
             },
             {
                 'name': 'kick',
                 'image': self.kick_image,
-                'damage': 5,
+                'damage': 1,
                 'range': 70,
                 'frame_count': 5
             }
@@ -162,12 +165,20 @@ class Enemy:
         if not hasattr(self.target, 'stats') or not self.target.stats.is_alive():
             return BehaviorTree.FAIL
 
+        if self.attack_cooldown > 0.0:
+            return BehaviorTree.FAIL
+
         profile = random.choice(self.attacks)
         payload = {'kind': profile['name'], 'target': self.target}
         self.state_machine.handle_state_event(('ATTACK', payload))
+
+        self.attack_cooldown = self.attack_cooldown_time
         return BehaviorTree.SUCCESS
 
     def update(self):
+        if self.attack_cooldown > 0.0:
+            self.attack_cooldown = max(0.0, self.attack_cooldown - game_framework.frame_time)
+
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, EnemyDeath):
             self.state_machine.handle_state_event(('DEATH', None))
         self.state_machine.update()
