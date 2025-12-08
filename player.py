@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import game_world
+import lose_mode
 from state_machine import StateMachine
 from stats import Stats
 
@@ -58,6 +59,7 @@ class Player:
         self.frame = 0
         self.face_dir = 1
         self.stats = Stats(500,10,5)
+        self.stats.full_heal()
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Dodge.png')
@@ -73,19 +75,24 @@ class Player:
         self.LEFT_PUNCH = LeftPunch(self)
         self.RIGHT_PUNCH = RightPunch(self)
         self.KICK = Kick(self)
+        self.DEATH = Death(self)
 
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {u_down: self.LEFT_PUNCH, i_down: self.RIGHT_PUNCH, a_down: self.WALK, d_down: self.WALK, k_down: self.KICK},
-             self.LEFT_PUNCH: {time_out: self.IDLE},
-             self.RIGHT_PUNCH: {time_out: self.IDLE},
-             self.WALK: {a_up: self.IDLE, d_up:self.IDLE},
-             self.KICK: {time_out:self.IDLE},
+             self.IDLE: {u_down: self.LEFT_PUNCH, i_down: self.RIGHT_PUNCH, a_down: self.WALK, d_down: self.WALK, k_down: self.KICK, death: self.DEATH},
+             self.LEFT_PUNCH: {time_out: self.IDLE, death: self.DEATH},
+             self.RIGHT_PUNCH: {time_out: self.IDLE, death: self.DEATH},
+             self.WALK: {a_up: self.IDLE, d_up:self.IDLE, death: self.DEATH},
+             self.KICK: {time_out:self.IDLE, death: self.DEATH},
+             self.DEATH: {}
             }
         )
 
     def update(self):
+        if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, Death):
+            self.state_machine.handle_state_event(('DEATH', None))
+
         self.state_machine.update()
 
     def draw(self):
@@ -303,13 +310,22 @@ class Death:
         self.player = player
 
     def enter(self,event):
-        pass
+        self.player.death_image = load_image('Death.png')
+        self.player.image = self.player.death_image
+        self.player.frame = 0
+        self.player.max_frame = 5
+        self.player.dir = 0
 
     def exit(self, event):
         pass
 
     def do(self):
-        pass
+        if self.player.frame < self.player.max_frame:
+            self.player.frame += 5 * ACTION_PER_TIME * game_framework.frame_time
+
 
     def draw(self):
-        pass
+        if self.player.face_dir == 1:
+            self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
+        else:
+            self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)

@@ -114,6 +114,8 @@ def update():
     enemies = [obj for obj in game_world.world[1] if isinstance(obj, Enemy)]
     if len(enemies) == 0:
         game_framework.change_mode(win_mode)
+    if player.stats.cur_hp == 0:
+        game_framework.change_mode(lose_mode)
 
 def draw():
     clear_canvas()
