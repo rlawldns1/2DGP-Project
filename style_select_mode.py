@@ -48,7 +48,7 @@ def apply_style(style_type):
     if style_type == 'striker':
         player.stats(450,20,5)
     elif style_type == 'grappler':
-        player.stats(550,10,15)
+        player.stats(600,10,10)
     elif style_type == 'all_rounder':
         player.stats(500,15,10)
 
