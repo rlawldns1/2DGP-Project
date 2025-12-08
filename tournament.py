@@ -1,2 +1,0 @@
-from enemy import Enemy
-
