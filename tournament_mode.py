@@ -45,15 +45,15 @@ def draw():
         e5.draw(840,120,100,100)
         e6.draw(970,120,100,100)
         e7.draw(1100,120,100,100)
-    # elif match == 1:
+    elif match == 1:
         p.draw(255,290,100,100)
         e2.draw(515,290,100,100)
         e4.draw(765,290,100,100)
         e6.draw(1025,290,100,100)
-    # elif match == 2:
+    elif match == 2:
         p.draw(385,460,100,100)
         e4.draw(895,460,100,100)
-    # elif match == 3:
+    elif match == 3:
         p.draw(640,650,100,100)
 
     update_canvas()
