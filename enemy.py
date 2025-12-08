@@ -34,26 +34,33 @@ def attack(e):
 
 class Enemy:
 
-    def __init__(self):
-        self.x = 1200
-        self.y = 300
+    def __init__(self, x = 1200, y = 300, max_hp=500, attack=10, defense=5, attack_cooldown_time=1.0,
+                 idle_image_path='Enemy/dodge.png',
+                 death_image_path='Enemy/Death.png',
+                 hurt_image_path='Enemy/hurt.png',
+                 left_punch_image_path='Enemy/Punch_2.png',
+                 right_punch_image_path='Enemy/Punch_1.png',
+                 kick_image_path='Enemy/Kick.png'):
+
+        self.x = x
+        self.y = y
         self.frame = 0
         self.face_dir = -1
-        self.stats = Stats(500, 10, 5)
+        self.stats = Stats(max_hp, attack, defense)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.attack_cooldown = 0.0
-        self.attack_cooldown_time = 1.0
+        self.attack_cooldown_time = attack_cooldown_time
 
         ## behavior tree 관련 멤버 변수
         self.target = None
 
-        self.idle_image = load_image('Enemy/dodge.png')
-        self.death_image = load_image('Enemy/Death.png')
-        self.hurt_image = load_image('Enemy/hurt.png')
-        self.left_punch_image = load_image('Enemy/Punch_2.png')
-        self.right_punch_image = load_image('Enemy/Punch_1.png')
-        self.kick_image = load_image('Enemy/Kick.png')
+        self.idle_image = load_image(idle_image_path)
+        self.death_image = load_image(death_image_path)
+        self.hurt_image = load_image(hurt_image_path)
+        self.left_punch_image = load_image(left_punch_image_path)
+        self.right_punch_image = load_image(right_punch_image_path)
+        self.kick_image = load_image(kick_image_path)
 
         self.attacks = [
             {
