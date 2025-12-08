@@ -298,3 +298,18 @@ class Kick:
         return (kick_x - kick_width // 2, kick_y - kick_height // 2, kick_x + kick_width // 2, kick_y + kick_height // 2)
 
 
+class Death:
+    def __init__(self, player):
+        self.player = player
+
+    def enter(self,event):
+        pass
+
+    def exit(self, event):
+        pass
+
+    def do(self):
+        pass
+
+    def draw(self):
+        pass
