@@ -209,7 +209,7 @@ class Enemy:
         if current_hp_width > 0:
             draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
-        self.font.draw(self.x - 50, self.y + 150, f'HP: {self.stats.cur_hp}/{self.stats.max_hp}', (255, 255, 0))
+        self.font.draw(hp_bar_x, hp_bar_y - 20, f'HP: {self.stats.cur_hp}/{self.stats.max_hp} ATK:{self.stats.attack} DEF:{self.stats.defense}', (255, 255, 0))
         draw_rectangle(*self.get_bb())
 
 
@@ -359,9 +359,6 @@ class EnemyAttack:
 
         img = profile['image']
         if self.enemy.face_dir == 1:
-            img.clip_draw(src_x, src_y, 128, 128,
-                          self.enemy.x, self.enemy.y, 512, 512)
+            img.clip_draw(src_x, src_y, 128, 128, self.enemy.x, self.enemy.y, 512, 512)
         else:
-            img.clip_composite_draw(src_x, src_y, 128, 128,
-                                    0, 'h',
-                                    self.enemy.x, self.enemy.y, 512, 512)
+            img.clip_composite_draw(src_x, src_y, 128, 128, 0, 'h', self.enemy.x, self.enemy.y, 512, 512)
