@@ -34,7 +34,7 @@ def attack(e):
 
 class Enemy:
 
-    def __init__(self, x = 1200, y = 300, max_hp=500, attack=10, defense=5, attack_cooldown_time=1.0,
+    def __init__(self, x = 1200, y = 300, max_hp=500, attack_=10, defense=5, attack_cooldown_time=1.0,
                  idle_image_path='Enemy/dodge.png',
                  death_image_path='Enemy/Death.png',
                  hurt_image_path='Enemy/hurt.png',
@@ -46,7 +46,7 @@ class Enemy:
         self.y = y
         self.frame = 0
         self.face_dir = -1
-        self.stats = Stats(max_hp, attack, defense)
+        self.stats = Stats(max_hp, attack_, defense)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.attack_cooldown = 0.0
