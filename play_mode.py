@@ -9,6 +9,7 @@ import rest_mode
 from player import Player
 from cage import Cage
 from enemy import Enemy
+import tournament_mode
 
 running = True
 player = None
@@ -40,56 +41,58 @@ def init():
     cage = Cage()
     game_world.add_object(cage,0)
 
-    player = Player()
+    if player is None:
+        player = Player()
+    else:
+        player.stats.full_heal()
     game_world.add_object(player,1)
 
+    cur_match = tournament_mode.match
+
     # 1번 상대
-    enemy1 = Enemy(x=950, y=300,
-        max_hp=500, attack_=10, defense=5,
-        attack_cooldown_time=1.0,
-        idle_image_path='Enemy/dodge.png',
-        death_image_path='Enemy/Death.png',
-        hurt_image_path='Enemy/hurt.png',
-        left_punch_image_path='Enemy/Punch_2.png',
-        right_punch_image_path='Enemy/Punch_1.png',
-        kick_image_path='Enemy/Kick.png')
-    enemy1.set_target(player)
-    game_world.add_object(enemy1,1)
+    if cur_match == 0:
+        enemy = Enemy(x=950, y=300,
+            max_hp=500, attack_=10, defense=5,
+            attack_cooldown_time=0.8,
+            idle_image_path='Enemy/dodge.png',
+            death_image_path='Enemy/Death.png',
+            hurt_image_path='Enemy/hurt.png',
+            left_punch_image_path='Enemy/Punch_2.png',
+            right_punch_image_path='Enemy/Punch_1.png',
+            kick_image_path='Enemy/Kick.png')
 
-    # # 2번 상대
-    # enemy2 = Enemy(x=950, y=300,
-    #                max_hp=100, attack=5, defense=5,
-    #                attack_cooldown_time=1.0,
-    #                idle_image_path='Enemy2/dodge.png',
-    #                death_image_path='Enemy2/Death.png',
-    #                hurt_image_path='Enemy2/hurt.png',
-    #                left_punch_image_path='Enemy2/Punch_2.png',
-    #                right_punch_image_path='Enemy2/Punch_1.png',
-    #                kick_image_path='Enemy2/Kick.png')
-    # enemy2.set_target(player)
-    # game_world.add_object(enemy2, 1)
-    #
-    # # 3번 상대
-    # enemy3 = Enemy(x=950, y=300,
-    #                max_hp=150, attack=10, defense=8,
-    #                attack_cooldown_time=1.0,
-    #                idle_image_path='Enemy3/dodge.png',
-    #                death_image_path='Enemy3/Death.png',
-    #                hurt_image_path='Enemy3/hurt.png',
-    #                left_punch_image_path='Enemy3/Punch_2.png',
-    #                right_punch_image_path='Enemy3/Punch_1.png',
-    #                kick_image_path='Enemy3/Kick.png')
-    # enemy3.set_target(player)
-    # game_world.add_object(enemy3, 1)
+    # 2번 상대
+    elif cur_match == 1:
+        enemy = Enemy(x=950, y=300,
+                       max_hp=500, attack_=20, defense=5,
+                       attack_cooldown_time=1.0,
+                       idle_image_path='Enemy2/dodge.png',
+                       death_image_path='Enemy2/Death.png',
+                       hurt_image_path='Enemy2/hurt.png',
+                       left_punch_image_path='Enemy2/Punch_2.png',
+                       right_punch_image_path='Enemy2/Punch_1.png',
+                       kick_image_path='Enemy2/Kick.png')
 
 
-    # for enemy in (enemy1,enemy2, enemy3):
-    #     game_world.add_collision_pair('player_lp:enemy', player, enemy)
-    #     game_world.add_collision_pair('player_rp:enemy', player, enemy)
-    #     game_world.add_collision_pair('player_kick:enemy', player, enemy)
-    game_world.add_collision_pair('player_lp:enemy', player, enemy1)
-    game_world.add_collision_pair('player_rp:enemy', player, enemy1)
-    game_world.add_collision_pair('player_kick:enemy', player, enemy1)
+    # 3번 상대
+    elif cur_match == 2:
+        enemy = Enemy(x=950, y=300,
+                       max_hp=500, attack_=20, defense=10,
+                       attack_cooldown_time=1.1,
+                       idle_image_path='Enemy4/dodge.png',
+                       death_image_path='Enemy4/Death.png',
+                       hurt_image_path='Enemy4/hurt.png',
+                       left_punch_image_path='Enemy4/Punch_2.png',
+                       right_punch_image_path='Enemy4/Punch_1.png',
+                       kick_image_path='Enemy4/Kick.png')
+
+    enemy.set_target(player)
+    game_world.add_object(enemy, 1)
+
+    game_world.collision_pairs.clear()
+    game_world.add_collision_pair('player_lp:enemy', player, enemy)
+    game_world.add_collision_pair('player_rp:enemy', player, enemy)
+    game_world.add_collision_pair('player_kick:enemy', player, enemy)
 
 
 def update():
