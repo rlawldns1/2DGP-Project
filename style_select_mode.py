@@ -2,6 +2,7 @@ from pico2d import *
 import game_framework
 import play_mode
 import title_mode
+import tournament_mode
 
 image = None
 font = None
@@ -39,22 +40,17 @@ def point_in_rect(px, py, rect):
 
 def apply_style(style_type):
     global selected
+    tournament_mode.selected_style = style_type
     player = getattr(play_mode, 'player', None)
     if not player:
         return
 
     if style_type == 'striker':
-        player.stats.max_hp(450)
-        player.stats.attack(20)
-        player.stats.defense(5)
+        player.stats(450,20,5)
     elif style_type == 'grappler':
-        player.stats.max_hp(550)
-        player.stats.attack(10)
-        player.stats.defense(15)
+        player.stats(550,10,15)
     elif style_type == 'all_rounder':
-        player.stats.max_hp(500)
-        player.stats.attack(15)
-        player.stats.defense(10)
+        player.stats(500,15,10)
 
     selected = True
 
@@ -71,23 +67,21 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.change_mode(title_mode)
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
-            game_framework.pop_mode()
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             mx, my = event.x, 720 - event.y
 
             if point_in_rect(mx, my, buttons['striker']):
                 apply_style('striker')
                 selected = True
-                game_framework.pop_mode()
+                game_framework.change_mode(tournament_mode)
             elif point_in_rect(mx, my, buttons['grappler']):
                 apply_style('grappler')
                 selected = True
-                game_framework.pop_mode()
+                game_framework.change_mode(tournament_mode)
             elif point_in_rect(mx, my, buttons['all_rounder']):
                 apply_style('all_rounder')
                 selected = True
-                game_framework.pop_mode()
+                game_framework.change_mode(tournament_mode)
 
 
 

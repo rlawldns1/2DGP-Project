@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import game_world
+import style_select_mode
 import title_mode
 import win_mode
 import lose_mode
@@ -18,6 +19,12 @@ time_left = 30
 _time_acc = 0.0
 time_font = None
 
+style_presets = {
+    'striker': (450, 20, 5),
+    'grappler': (550, 10, 15),
+    'all_rounder': (500, 15, 10)
+}
+
 def handle_events():
     events = get_events()
     for event in events:
@@ -27,6 +34,12 @@ def handle_events():
             game_framework.change_mode(title_mode)
         else:
             player.handle_event(event)
+
+def apply_selected_style():
+    style = getattr(tournament_mode, 'selected_style', None)
+    stats = style_presets.get(style)
+    if stats and player:
+        player.stats.set_stats(*stats)
 
 def init():
     global running
@@ -43,8 +56,11 @@ def init():
 
     if player is None:
         player = Player()
+        apply_selected_style()
     else:
+        apply_selected_style()
         player.stats.full_heal()
+
     game_world.add_object(player,1)
 
     cur_match = tournament_mode.match

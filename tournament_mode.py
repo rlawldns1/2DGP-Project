@@ -7,6 +7,7 @@ image = None
 p = None
 e1 = e2 = e3 = e4 = e5 = e6 = e7 = None
 match = 0
+selected_style = None
 
 def init():
     global image, p, e1, e2, e3, e4, e5, e6, e7, match

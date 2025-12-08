@@ -5,6 +5,13 @@ class Stats:
         self.attack = attack
         self.defense = defense
 
+    def set_stats(self, max_hp, attack, defense):
+        self.max_hp = max_hp
+        self.attack = attack
+        self.defense = defense
+        self.cur_hp = max_hp
+
+
     def take_damage(self, damage):
         actual_damage = max(1, damage - self.defense)
         self.cur_hp = max(0, self.cur_hp - actual_damage)
