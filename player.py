@@ -53,7 +53,7 @@ class Player:
         self.y = 300
         self.frame = 0
         self.face_dir = 1
-        self.stats = Stats(100,10,5)
+        self.stats = Stats(500,10,5)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.idle_image = load_image('Dodge.png')

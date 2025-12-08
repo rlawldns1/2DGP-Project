@@ -39,7 +39,7 @@ class Enemy:
         self.y = 300
         self.frame = 0
         self.face_dir = -1
-        self.stats = Stats(100, 5, 5)
+        self.stats = Stats(500, 10, 5)
         self.font = load_font('ENCR10B.TTF', 16)
 
         self.attack_cooldown = 0.0

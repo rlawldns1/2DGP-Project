@@ -13,7 +13,7 @@ from enemy import Enemy
 running = True
 player = None
 
-time_left = 60
+time_left = 30
 _time_acc = 0.0
 time_font = None
 
@@ -34,7 +34,7 @@ def init():
     global time_left, _time_acc, time_font
     running = True
 
-    time_left = 10
+    time_left = 30
     _time_acc = 0.0
     time_font = load_font('ENCR10B.TTF', 50)
 
@@ -96,5 +96,5 @@ def pause():
 
 def resume():
     global time_left, _time_acc
-    time_left = 60
+    time_left = 30
     _time_acc = 0.0
