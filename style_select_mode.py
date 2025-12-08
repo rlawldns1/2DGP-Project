@@ -8,9 +8,9 @@ image = None
 font = None
 
 buttons = {
-    'striker': (260, 150, 800, 150),
+    'striker': (260, 480, 800, 150),
     'grappler': (260, 330, 800, 150),
-    'all_rounder': (260, 480, 800, 150)
+    'all_rounder': (260, 150, 800, 150)
 }
 
 selected = False
