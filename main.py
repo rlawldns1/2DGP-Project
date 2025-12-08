@@ -1,5 +1,5 @@
 from pico2d import *
-import tournament_mode as start_mode
+import title_mode as start_mode
 import game_framework
 
 

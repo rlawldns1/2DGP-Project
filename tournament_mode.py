@@ -6,6 +6,7 @@ import title_mode
 image = None
 p = None
 e1 = e2 = e3 = e4 = e5 = e6 = e7 = None
+match = 0
 
 def init():
     global image, p, e1, e2, e3, e4, e5, e6, e7, match
@@ -18,7 +19,6 @@ def init():
     e5 = load_image('profile/enemy5.png')
     e6 = load_image('profile/enemy6.png')
     e7 = load_image('profile/enemy7.png')
-    match = 0
 
 def finish():
     global image, p, e1, e2, e3, e4, e5, e6, e7
@@ -46,14 +46,48 @@ def draw():
         e6.draw(970,120,100,100)
         e7.draw(1100,120,100,100)
     elif match == 1:
+        p.draw(190, 120, 100, 100)
+        e1.draw(320, 120, 100, 100)
+        e2.draw(450, 120, 100, 100)
+        e3.draw(580, 120, 100, 100)
+        e4.draw(710, 120, 100, 100)
+        e5.draw(840, 120, 100, 100)
+        e6.draw(970, 120, 100, 100)
+        e7.draw(1100, 120, 100, 100)
         p.draw(255,290,100,100)
         e2.draw(515,290,100,100)
         e4.draw(765,290,100,100)
         e6.draw(1025,290,100,100)
     elif match == 2:
+        p.draw(190, 120, 100, 100)
+        e1.draw(320, 120, 100, 100)
+        e2.draw(450, 120, 100, 100)
+        e3.draw(580, 120, 100, 100)
+        e4.draw(710, 120, 100, 100)
+        e5.draw(840, 120, 100, 100)
+        e6.draw(970, 120, 100, 100)
+        e7.draw(1100, 120, 100, 100)
+        p.draw(255, 290, 100, 100)
+        e2.draw(515, 290, 100, 100)
+        e4.draw(765, 290, 100, 100)
+        e6.draw(1025, 290, 100, 100)
         p.draw(385,460,100,100)
         e4.draw(895,460,100,100)
     elif match == 3:
+        p.draw(190, 120, 100, 100)
+        e1.draw(320, 120, 100, 100)
+        e2.draw(450, 120, 100, 100)
+        e3.draw(580, 120, 100, 100)
+        e4.draw(710, 120, 100, 100)
+        e5.draw(840, 120, 100, 100)
+        e6.draw(970, 120, 100, 100)
+        e7.draw(1100, 120, 100, 100)
+        p.draw(255, 290, 100, 100)
+        e2.draw(515, 290, 100, 100)
+        e4.draw(765, 290, 100, 100)
+        e6.draw(1025, 290, 100, 100)
+        p.draw(385, 460, 100, 100)
+        e4.draw(895, 460, 100, 100)
         p.draw(640,650,100,100)
 
     update_canvas()

@@ -18,6 +18,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            tournament_mode.match += 1
             game_framework.change_mode(tournament_mode)
 
 def draw():
