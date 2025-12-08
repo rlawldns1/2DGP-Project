@@ -82,17 +82,16 @@ class Enemy:
         self.IDLE = EnemyIdle(self)
         self.DEATH = EnemyDeath(self)
         self.HURT = EnemyHurt(self)
+        self.ATTACK = EnemyAttack(self)
 
 
         self.state_machine = StateMachine(
             self.IDLE,
             {
-             self.IDLE: {death: self.DEATH, hurt: self.HURT},
+             self.IDLE: {death: self.DEATH, hurt: self.HURT, attack: self.ATTACK},
              self.DEATH: {},
              self.HURT: {time_out: self.IDLE, death: self.DEATH},
-             # self.PUNCH: {},
-             # self.WALK: {},
-             # self.KICK: {},
+             self.ATTACK : {time_out: self.IDLE, death: self.DEATH, hurt: self.HURT},
             }
         )
         self.build_behavior_tree()
@@ -156,13 +155,6 @@ class Enemy:
         print(f'[BT] InAttackRange: distance={distance:.1f}, attack_range={attack_range}')
         return BehaviorTree.SUCCESS if distance <= attack_range else BehaviorTree.FAIL
 
-    def attack_target(self):
-        if self.target is None:
-            return BehaviorTree.FAIL
-
-        if hasattr(self.target, 'stats') and self.target.stats.is_alive():
-            damage = self.target.stats.take_damage(self.stats.attack)
-        return BehaviorTree.SUCCESS
 
     def attack_target(self):
         if self.target is None:
@@ -315,17 +307,17 @@ class EnemyAttack:
 
     def enter(self, event):
         payload = event[1] or {}
-        kind = payload.get('kind', 'LEFT_PUNCH')
+        kind = payload.get('kind', 'left_punch')
 
         self.profile = next(
-            (p for p in self.enemy.attack_profiles if p['name'] == kind),
-            self.enemy.attack_profiles[0]
+            (p for p in self.enemy.attacks if p['name'] == kind),
+            self.enemy.attacks[0]
         )
         self.enemy.current_attack_profile = self.profile
 
         self.enemy.image = self.profile['image']
         self.enemy.frame = 0
-        self.enemy.max_frame = self.profile['frames']
+        self.enemy.max_frame = self.profile['frame_count']
 
         target = payload.get('target')
         if target and hasattr(target, 'stats') and target.stats.is_alive():
@@ -343,7 +335,7 @@ class EnemyAttack:
             self.enemy.state_machine.handle_state_event(('TIMEOUT', None))
 
     def draw(self):
-        profile = self.enemy.current_attack_profile or self.enemy.attack_profiles[0]
+        profile = self.enemy.current_attack_profile or self.enemy.attacks[0]
         src_x = int(self.enemy.frame) * 128
         src_y = 0
 
