@@ -46,6 +46,10 @@ def k_down(e):
 def time_out(e):
     return e[0] == 'TIMEOUT'
 
+# 사망
+def death(e):
+    return e[0] == 'DEATH'
+
 class Player:
 
     def __init__(self):
