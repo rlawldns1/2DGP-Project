@@ -33,6 +33,7 @@ def attack(e):
     return e[0] == 'ATTACK'
 
 class Enemy:
+    hit_sound = None
 
     def __init__(self, x = 1200, y = 300, max_hp=500, attack_=10, defense=5, attack_cooldown_time=1.0,
                  idle_image_path='Enemy/dodge.png',
@@ -48,6 +49,10 @@ class Enemy:
         self.face_dir = -1
         self.stats = Stats(max_hp, attack_, defense)
         self.font = load_font('ENCR10B.TTF', 16)
+
+        if not Enemy.hit_sound:
+            Enemy.hit_sound = load_wav('sound/타격음1.wav')
+            Enemy.hit_sound.set_volume(32)
 
         self.attack_cooldown = 0.0
         self.attack_cooldown_time = attack_cooldown_time
@@ -237,6 +242,7 @@ class Enemy:
             return
 
         cur_state.hit = True
+        Enemy.hit_sound.play()
         actual_damage = self.stats.take_damage(other.stats.attack)
 
         if not self.stats.is_alive():

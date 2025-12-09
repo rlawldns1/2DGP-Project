@@ -21,7 +21,7 @@ time_font = None
 
 style_presets = {
     'striker': (450, 20, 5),
-    'grappler': (550, 10, 15),
+    'grappler': (600, 10, 10),
     'all_rounder': (500, 15, 10)
 }
 
@@ -58,7 +58,6 @@ def init():
         player = Player()
         apply_selected_style()
     else:
-        apply_selected_style()
         player.stats.full_heal()
 
     game_world.add_object(player,1)
@@ -69,7 +68,7 @@ def init():
     if cur_match == 0:
         enemy = Enemy(x=950, y=300,
             max_hp=500, attack_=15, defense=5,
-            attack_cooldown_time=0.8,
+            attack_cooldown_time=1.0,
             idle_image_path='Enemy/dodge.png',
             death_image_path='Enemy/Death.png',
             hurt_image_path='Enemy/hurt.png',
@@ -93,8 +92,8 @@ def init():
     # 3번 상대
     elif cur_match == 2:
         enemy = Enemy(x=950, y=300,
-                       max_hp=500, attack_=25, defense=15,
-                       attack_cooldown_time=0.6,
+                       max_hp=500, attack_=25, defense=10,
+                       attack_cooldown_time=1.0,
                        idle_image_path='Enemy4/dodge.png',
                        death_image_path='Enemy4/Death.png',
                        hurt_image_path='Enemy4/hurt.png',

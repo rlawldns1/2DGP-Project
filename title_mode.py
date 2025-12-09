@@ -5,10 +5,15 @@ import style_select_mode
 import tournament_mode
 
 image = None
+title_sound = None
 
 def init():
-    global image
+    global image, title_sound
     image = load_image('title.png')
+    title_sound = load_music('sound/title_mode.mp3')
+    title_sound.set_volume(32)
+    title_sound.play()
+
 
 def finish():
     global image
