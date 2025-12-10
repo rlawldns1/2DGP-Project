@@ -228,15 +228,15 @@ class Enemy:
 
     def get_bb(self):
         if isinstance(self.state_machine.cur_state, EnemyAttack):
-            if self.state_machine.cur_state.hit:
-                return self.x - 64, self.y - 256, self.x + 64, self.y + 32
-            atk_offset = 120 * self.face_dir
-            atk_x = self.x + atk_offset
-            atk_y = self.y - 60
-            atk_width = 40
-            atk_height = 40
-            return (atk_x - atk_width // 2, atk_y - atk_height // 2,
-                    atk_x + atk_width // 2, atk_y + atk_height // 2)
+            profile = self.current_attack_profile
+            if profile:
+                atk_offset = 120 * self.face_dir
+                atk_x = self.x + atk_offset
+                atk_y = self.y - 60
+                atk_width = 40
+                atk_height = 40
+                return (atk_x - atk_width // 2, atk_y - atk_height // 2,
+                        atk_x + atk_width // 2, atk_y + atk_height // 2)
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):

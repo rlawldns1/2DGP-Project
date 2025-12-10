@@ -148,6 +148,9 @@ class Player:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
+        if group != 'enemy:player':
+            return
+
         cur_state = getattr(other.state_machine, 'cur_state', None)
         if not isinstance(cur_state, EnemyAttack):
             return
@@ -155,15 +158,16 @@ class Player:
             return
         if self.hit:
             return
+
         cur_state.hit = True
         self.hit = True
         actual_damage = self.stats.take_damage(other.stats.attack)
 
-        if group == 'enemy_lp:player'or group == 'enemy_rp:player':
-            self.hit_punch_sound.play()
-
-        elif group == 'enemy_kick:player':
+        attack_name = cur_state.profile.get('name')
+        if attack_name == 'kick':
             self.hit_kick_sound.play()
+        else:
+            self.hit_punch_sound.play()
 
 
 

@@ -108,9 +108,7 @@ def init():
     game_world.add_collision_pair('player_lp:enemy', player, enemy)
     game_world.add_collision_pair('player_rp:enemy', player, enemy)
     game_world.add_collision_pair('player_kick:enemy', player, enemy)
-    game_world.add_collision_pair('enemy_lp:player', enemy, player)
-    game_world.add_collision_pair('enemy_rp:player', enemy, player)
-    game_world.add_collision_pair('enemy_kick:player', enemy, player)
+    game_world.add_collision_pair('enemy:player', enemy, player)
 
 
 def update():
