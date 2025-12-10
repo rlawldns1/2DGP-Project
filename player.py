@@ -5,6 +5,7 @@ import game_world
 import lose_mode
 from state_machine import StateMachine
 from stats import Stats
+from enemy import EnemyAttack
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
@@ -63,6 +64,7 @@ class Player:
         self.stats = Stats(500,10,5)
         self.stats.full_heal()
         self.font = load_font('ENCR10B.TTF', 16)
+        self.hit = False
 
         self.hit_punch_sound = load_wav('sound/타격음3.wav')
         self.hit_punch_sound.set_volume(32)
@@ -97,6 +99,7 @@ class Player:
         )
 
     def update(self):
+        self.hit = False
         if self.stats.cur_hp <= 0 and not isinstance(self.state_machine.cur_state, Death):
             self.state_machine.handle_state_event(('DEATH', None))
 
@@ -145,6 +148,17 @@ class Player:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
+        cur_state = getattr(other.state_machine, 'cur_state', None)
+        if not isinstance(cur_state, EnemyAttack):
+            return
+        if cur_state.hit:
+            return
+        if self.hit:
+            return
+        cur_state.hit = True
+        self.hit = True
+        actual_damage = self.stats.take_damage(other.stats.attack)
+
         if group == 'enemy_lp:player'or group == 'enemy_rp:player':
             self.hit_punch_sound.play()
 

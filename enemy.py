@@ -5,7 +5,7 @@ import game_framework
 import game_world
 from state_machine import StateMachine
 from stats import Stats
-from player import LeftPunch, RightPunch, Kick
+
 from behavior_tree import *
 
 PIXEL_PER_METER = (10.0 / 0.3)
@@ -228,6 +228,8 @@ class Enemy:
 
     def get_bb(self):
         if isinstance(self.state_machine.cur_state, EnemyAttack):
+            if self.state_machine.cur_state.hit:
+                return self.x - 64, self.y - 256, self.x + 64, self.y + 32
             atk_offset = 120 * self.face_dir
             atk_x = self.x + atk_offset
             atk_y = self.y - 60
@@ -238,6 +240,7 @@ class Enemy:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
+        from player import LeftPunch, RightPunch, Kick
         attack_groups = {
             'player_lp:enemy': LeftPunch,
             'player_rp:enemy': RightPunch,
@@ -344,7 +347,7 @@ class EnemyAttack:
     def __init__(self, enemy):
         self.enemy = enemy
         self.profile = None
-
+        self.hit = False
 
     def enter(self, event):
         payload = event[1] or {}
@@ -360,14 +363,12 @@ class EnemyAttack:
         self.enemy.frame = 0
         self.enemy.max_frame = self.profile['frame_count']
 
-        target = payload.get('target')
-        if target and hasattr(target, 'stats') and target.stats.is_alive():
-            damage = int(self.enemy.stats.attack * self.profile['damage'])
-            target.stats.take_damage(damage)
+        self.hit = False
 
     def exit(self, event):
         self.profile = None
         self.enemy.current_attack_profile = None
+        self.hit = False
 
     def do(self):
         if self.enemy.frame < self.enemy.max_frame:
