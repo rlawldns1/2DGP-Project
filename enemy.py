@@ -214,7 +214,7 @@ class Enemy:
             draw_rectangle(hp_bar_x, hp_bar_y, hp_bar_x + current_hp_width, hp_bar_y + hp_bar_height, 255,0,0,1,True)
 
         self.font.draw(hp_bar_x, hp_bar_y - 20, f'HP: {self.stats.cur_hp}/{self.stats.max_hp} ATK:{self.stats.attack} DEF:{self.stats.defense}', (255, 255, 0))
-        draw_rectangle(*self.get_bb())
+        # draw_rectangle(*self.get_bb())
 
 
     def handle_event(self, event):

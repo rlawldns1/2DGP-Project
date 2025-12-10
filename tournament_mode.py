@@ -2,16 +2,18 @@ from pico2d import *
 import game_framework
 import play_mode
 import title_mode
+from welcometoufc import WelcomeToUFC
 
 image = None
 p = None
 e1 = e2 = e3 = e4 = e5 = e6 = e7 = None
 match = 0
 selected_style = None
-welcome_to_ufc = None
+ufc = None
+ufc_timer = 0.0
 
 def init():
-    global image, p, e1, e2, e3, e4, e5, e6, e7, match
+    global image, p, e1, e2, e3, e4, e5, e6, e7, match, ufc_timer
     image = load_image('tournament.png')
     p = load_image('profile/player.png')
     e1 = load_image('profile/enemy1.png')
@@ -21,12 +23,17 @@ def init():
     e5 = load_image('profile/enemy5.png')
     e6 = load_image('profile/enemy6.png')
     e7 = load_image('profile/enemy7.png')
-    welcome_to_ufc = load_music('sound/welcometotheufc.mp3')
-    welcome_to_ufc.set_volume(32)
+    ufc = None
+    ufc_timer = 0.0
+
 
 def finish():
-    global image, p, e1, e2, e3, e4, e5, e6, e7
-    del image, p, e1, e2, e3, e4, e5, e6, e7
+    global image, p, e1, e2, e3, e4, e5, e6, e7, ufc, ufc_timer
+    del image, p, e1, e2, e3, e4, e5, e6, e7, ufc_timer
+    if ufc:
+        del ufc
+
+
 
 def handle_events():
     events = get_events()
@@ -94,12 +101,22 @@ def draw():
         e4.draw(895, 460, 100, 100)
         p.draw(640,650,100,100)
 
+
+    elif match == 4:
+        ufc.draw()
+
     update_canvas()
 
 def update():
-    global  match, welcome_to_ufc
+    global  match, ufc, ufc_timer
     if match == 3:
-        welcome_to_ufc.play()
+        ufc_timer += 0.01
+        if ufc_timer > 3:
+            match = 4
+            ufc = WelcomeToUFC()
+            ufc_timer = 0.0
+    if ufc:
+        ufc.update()
 
 def pause():
     pass
