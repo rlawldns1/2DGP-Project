@@ -8,6 +8,7 @@ p = None
 e1 = e2 = e3 = e4 = e5 = e6 = e7 = None
 match = 0
 selected_style = None
+welcome_to_ufc = None
 
 def init():
     global image, p, e1, e2, e3, e4, e5, e6, e7, match
@@ -20,6 +21,8 @@ def init():
     e5 = load_image('profile/enemy5.png')
     e6 = load_image('profile/enemy6.png')
     e7 = load_image('profile/enemy7.png')
+    welcome_to_ufc = load_music('sound/welcometotheufc.mp3')
+    welcome_to_ufc.set_volume(32)
 
 def finish():
     global image, p, e1, e2, e3, e4, e5, e6, e7
@@ -94,7 +97,9 @@ def draw():
     update_canvas()
 
 def update():
-    pass
+    global  match, welcome_to_ufc
+    if match == 3:
+        welcome_to_ufc.play()
 
 def pause():
     pass
