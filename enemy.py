@@ -33,7 +33,8 @@ def attack(e):
     return e[0] == 'ATTACK'
 
 class Enemy:
-    hit_sound = None
+    hit_punch_sound = None
+    hit_kick_sound = None
 
     def __init__(self, x = 1200, y = 300, max_hp=500, attack_=10, defense=5, attack_cooldown_time=1.0,
                  idle_image_path='Enemy/dodge.png',
@@ -50,9 +51,13 @@ class Enemy:
         self.stats = Stats(max_hp, attack_, defense)
         self.font = load_font('ENCR10B.TTF', 16)
 
-        if not Enemy.hit_sound:
-            Enemy.hit_sound = load_wav('sound/타격음1.wav')
-            Enemy.hit_sound.set_volume(32)
+        if not Enemy.hit_punch_sound:
+            Enemy.hit_punch_sound = load_wav('sound/타격음1.wav')
+            Enemy.hit_punch_sound.set_volume(32)
+
+        if not Enemy.hit_kick_sound:
+            Enemy.hit_kick_sound = load_wav('sound/타격음2.wav')
+            Enemy.hit_kick_sound.set_volume(32)
 
         self.attack_cooldown = 0.0
         self.attack_cooldown_time = attack_cooldown_time
@@ -222,6 +227,14 @@ class Enemy:
         self.state_machine.handle_state_event(('INPUT', event))
 
     def get_bb(self):
+        if isinstance(self.state_machine.cur_state, EnemyAttack):
+            atk_offset = 120 * self.face_dir
+            atk_x = self.x + atk_offset
+            atk_y = self.y - 60
+            atk_width = 40
+            atk_height = 40
+            return (atk_x - atk_width // 2, atk_y - atk_height // 2,
+                    atk_x + atk_width // 2, atk_y + atk_height // 2)
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
@@ -242,7 +255,10 @@ class Enemy:
             return
 
         cur_state.hit = True
-        Enemy.hit_sound.play()
+        if isinstance(cur_state, Kick):
+            Enemy.hit_kick_sound.play()
+        else:
+            Enemy.hit_punch_sound.play()
         actual_damage = self.stats.take_damage(other.stats.attack)
 
         if not self.stats.is_alive():
@@ -328,6 +344,7 @@ class EnemyAttack:
     def __init__(self, enemy):
         self.enemy = enemy
         self.profile = None
+
 
     def enter(self, event):
         payload = event[1] or {}

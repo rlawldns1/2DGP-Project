@@ -52,6 +52,8 @@ def death(e):
     return e[0] == 'DEATH'
 
 class Player:
+    hit_kick_sound = None
+    hit_punch_sound = None
 
     def __init__(self):
         self.x = 400
@@ -61,6 +63,11 @@ class Player:
         self.stats = Stats(500,10,5)
         self.stats.full_heal()
         self.font = load_font('ENCR10B.TTF', 16)
+
+        self.hit_punch_sound = load_wav('sound/타격음3.wav')
+        self.hit_punch_sound.set_volume(32)
+        self.hit_kick_sound = load_wav('sound/타격음4.wav')
+        self.hit_kick_sound.set_volume(32)
 
         self.idle_image = load_image('Dodge.png')
         self.left_punch_image = load_image('Punch_2.png')
@@ -138,7 +145,12 @@ class Player:
         return self.x - 64, self.y - 256, self.x + 64, self.y + 32
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'enemy_lp:player'or group == 'enemy_rp:player':
+            self.hit_punch_sound.play()
+
+        elif group == 'enemy_kick:player':
+            self.hit_kick_sound.play()
+
 
 
 class Idle:
