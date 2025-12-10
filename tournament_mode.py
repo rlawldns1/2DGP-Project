@@ -40,7 +40,7 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE and match < 4:
             game_framework.change_mode(play_mode)
 
 def draw():
