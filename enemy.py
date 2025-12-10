@@ -33,9 +33,6 @@ def attack(e):
     return e[0] == 'ATTACK'
 
 class Enemy:
-    hit_punch_sound = None
-    hit_kick_sound = None
-
     def __init__(self, x = 1200, y = 300, max_hp=500, attack_=10, defense=5, attack_cooldown_time=1.0,
                  idle_image_path='Enemy/dodge.png',
                  death_image_path='Enemy/Death.png',
@@ -51,13 +48,11 @@ class Enemy:
         self.stats = Stats(max_hp, attack_, defense)
         self.font = load_font('ENCR10B.TTF', 16)
 
-        if not Enemy.hit_punch_sound:
-            Enemy.hit_punch_sound = load_wav('sound/타격음1.wav')
-            Enemy.hit_punch_sound.set_volume(32)
+        Enemy.hit_punch_sound = load_wav('sound/타격음1.wav')
+        Enemy.hit_punch_sound.set_volume(32)
 
-        if not Enemy.hit_kick_sound:
-            Enemy.hit_kick_sound = load_wav('sound/타격음2.wav')
-            Enemy.hit_kick_sound.set_volume(32)
+        Enemy.hit_kick_sound = load_wav('sound/타격음2.wav')
+        Enemy.hit_kick_sound.set_volume(32)
 
         self.attack_cooldown = 0.0
         self.attack_cooldown_time = attack_cooldown_time
@@ -95,7 +90,6 @@ class Enemy:
                 'frame_count': 5
             }
         ]
-        self.current_attack = None
 
         self.image = self.idle_image
 
@@ -276,7 +270,6 @@ class EnemyIdle:
     def enter(self,event):
         self.enemy.image = self.enemy.idle_image
         self.enemy.frame = 0
-        self.enemy.wait_time = get_time()
         self.enemy.dir = 0
 
     def exit(self, event):
@@ -298,7 +291,6 @@ class EnemyDeath:
     def enter(self,event):
         self.enemy.image = self.enemy.death_image
         self.enemy.frame = 0
-        self.enemy.wait_time = get_time()
         self.enemy.dir = 0
         self.enemy.max_frame = 5
 
@@ -324,7 +316,6 @@ class EnemyHurt:
     def enter(self,event):
         self.enemy.image = self.enemy.hurt_image
         self.enemy.frame = 0
-        self.enemy.wait_time = get_time()
         self.enemy.dir = 0
         self.enemy.max_frame = 3
 

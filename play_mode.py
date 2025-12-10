@@ -12,7 +12,6 @@ from cage import Cage
 from enemy import Enemy
 import tournament_mode
 
-running = True
 player = None
 
 time_left = 30
@@ -42,10 +41,8 @@ def apply_selected_style():
         player.stats.set_stats(*stats)
 
 def init():
-    global running
     global player
     global time_left, _time_acc, time_font
-    running = True
 
     time_left = 30
     _time_acc = 0.0

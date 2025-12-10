@@ -16,7 +16,6 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
-# FRAMES_PER_SECOND = FRAMES_PER_ACTION / TIME_PER_ACTION
 
 def d_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_d
@@ -53,9 +52,6 @@ def death(e):
     return e[0] == 'DEATH'
 
 class Player:
-    hit_kick_sound = None
-    hit_punch_sound = None
-
     def __init__(self):
         self.x = 400
         self.y = 300
@@ -178,7 +174,6 @@ class Idle:
     def enter(self,event):
         self.player.image = self.player.idle_image
         self.player.frame = 0
-        self.player.wait_time = get_time()
         self.player.dir = 0
 
     def exit(self, event):
@@ -200,7 +195,6 @@ class Walk:
     def enter(self,event):
         self.player.image = self.player.walk_image
         self.player.frame = 0
-        self.player.wait_time = get_time()
         self.player.dir = 0
         if d_down(event) or a_up(event):
             self.player.dir = self.player.face_dir = 1
@@ -231,7 +225,6 @@ class LeftPunch:
         self.player.image = self.player.left_punch_image
         self.player.frame = 0
         self.player.max_frame = 3
-        self.player.wait_time = get_time()
         self.hit = False
 
     def exit(self, event):
@@ -247,7 +240,7 @@ class LeftPunch:
             self.player.image.clip_draw(int(self.player.frame) * 128, 0, 128, 128, self.player.x, self.player.y, 512, 512)
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
-        draw_rectangle(*self.get_lp_bb())
+
 
     def get_lp_bb(self):
         lp_offset = 120 * self.player.face_dir
@@ -268,7 +261,6 @@ class RightPunch:
         self.player.image = self.player.right_punch_image
         self.player.frame = 0
         self.player.max_frame = 5
-        self.player.wait_time = get_time()
         self.hit = False
 
     def exit(self, event):
@@ -285,7 +277,6 @@ class RightPunch:
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
-        draw_rectangle(*self.get_rp_bb())
 
     def get_rp_bb(self):
         rp_offset = 140 * self.player.face_dir
@@ -306,7 +297,6 @@ class Kick:
         self.player.image = self.player.right_kick_image
         self.player.frame = 0
         self.player.max_frame = 5
-        self.player.wait_time = get_time()
         self.hit = False
 
     def exit(self, event):
@@ -323,28 +313,16 @@ class Kick:
         else:
             self.player.image.clip_composite_draw(int(self.player.frame) * 128, 0, 128, 128, 0, 'h', self.player.x, self.player.y, 512, 512)
 
-        draw_rectangle(*self.get_kick_bb())
-
-    def get_kick_bb(self):
-        kick_offset = 160 * self.player.face_dir
-        kick_x = self.player.x + kick_offset
-        kick_y = self.player.y - 70
-        kick_width = 30
-        kick_height = 30
-
-        return (kick_x - kick_width // 2, kick_y - kick_height // 2, kick_x + kick_width // 2, kick_y + kick_height // 2)
-
 
 class Death:
     def __init__(self, player):
         self.player = player
+        self.player.death_image = load_image('Death.png')
 
     def enter(self,event):
-        self.player.death_image = load_image('Death.png')
         self.player.image = self.player.death_image
         self.player.frame = 0
         self.player.max_frame = 5
-        self.player.dir = 0
 
     def exit(self, event):
         pass
